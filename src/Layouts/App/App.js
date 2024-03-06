@@ -1,13 +1,17 @@
 import './App.css';
 
-import Header from '../Header/Header';
+import { Routes, Route } from 'react-router-dom';
+
+import Header from '../../Components/Header/Header';
 import Dashboard from '../Dashboard/Dashboard';
 
 function App() {
   return (
     <>
         <Header />
-        <Dashboard />
+        <Routes>
+          <Route path='/' element={<Dashboard />}/>
+        </Routes>
     </>
   );
 }

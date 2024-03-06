@@ -1,14 +1,16 @@
 import "./Header.css";
 
+import { Link } from 'react-router-dom' 
+
 function Header() {
     return <div className="Header">
         <div className="Title">
-            <p>Cuentas por cobrar</p>
+            <Link to='/'>Cuentas por cobrar</Link>
         </div>
         <div className="Options">
-            <p>Link 1</p>
-            <p>Link 2</p>
-            <p>Link 3</p>
+            <Link to='/'>Link 1</Link>
+            <Link to='/'>Link 2</Link>
+            <Link to='/'>Link 3</Link>
         </div>
     </div>
 }
