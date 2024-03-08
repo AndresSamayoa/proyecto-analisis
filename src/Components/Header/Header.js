@@ -8,7 +8,7 @@ function Header() {
             <Link to='/'>Cuentas por cobrar</Link>
         </div>
         <div className="Options">
-            <Link to='/'>Link 1</Link>
+            <Link to='/customer'>Clientes</Link>
             <Link to='/'>Link 2</Link>
             <Link to='/'>Link 3</Link>
         </div>
