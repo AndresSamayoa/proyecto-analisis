@@ -1,12 +1,10 @@
 import './Customer.css'
 
-import {CustomerForm } from "../../Components";
+import { CustomerCrudContainer } from "../../Components";
 
 function Customer () {
     return <div className="customerPage">
-        <div className="customerSegment">
-            <CustomerForm />
-        </div>
+        <CustomerCrudContainer />
     </div>
 }
 
