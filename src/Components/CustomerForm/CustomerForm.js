@@ -18,6 +18,14 @@ function CustomerForm (props) {
         props.setTipoCliente(e.target.value);
     };
 
+    const changeCorreoElectronico = (e) => {
+        props.setCorreoElectronico(e.target.value);
+    };
+
+    const changeTelefono = (e) => {
+        props.setTelefono(e.target.value);
+    };
+
     const cancelForm = (e) => {
         e.preventDefault();
         props.setClienteId(0)
@@ -25,6 +33,8 @@ function CustomerForm (props) {
         props.setRazonSocial('')
         props.setDireccionFiscal('')
         props.setTipoCliente('')
+        props.setCorreoElectronico('')
+        props.setTelefono('')
     }
 
     const submitForm = (e) => {
@@ -47,10 +57,18 @@ function CustomerForm (props) {
                 <input type="text" id="txtDireccionFiscal" defaultValue={props.direccionFiscal} onChange={changeDireccionFiscal}/>
             </div>
             <div className="inputContainer">
+                <label>Correo electronico</label>
+                <input type="text" id="txtCorreoElectronico" defaultValue={props.correoElectronico} onChange={changeCorreoElectronico}/>
+            </div>
+            <div className="inputContainer">
+                <label>Telefono</label>
+                <input type="text" id="txtTelefono" defaultValue={props.telefono} onChange={changeTelefono}/>
+            </div>
+            <div className="inputContainer">
                 <label>Tipo de cliente</label>
-                <select id="cbTipo" defaultValue={props.tipoCliente} onChange={changeTipoCliente}>
-                    <option>Place holder</option>
-                    <option>Opcion 1</option>
+                <select id="cbTipo"  value={props.tipoCliente} onChange={changeTipoCliente}>
+                    <option>Persona</option>
+                    <option>Juridico</option>
                 </select>
             </div>
             <div className="inputContainer">
