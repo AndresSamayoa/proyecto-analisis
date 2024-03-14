@@ -9,7 +9,7 @@ function Header() {
         </div>
         <div className="Options">
             <Link to='/customer'>Clientes</Link>
-            <Link to='/'>Link 2</Link>
+            <Link to='/product'>Productos</Link>
             <Link to='/'>Link 3</Link>
         </div>
     </div>
