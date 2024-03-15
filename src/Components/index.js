@@ -1,4 +1,5 @@
 import Header from './Header/Header';
+import SearchInput from './SearchInput/SearchInput';
 import CustomerForm from './CustomerForm/CustomerForm';
 import CustomerCrudContainer from './CustomerCrudContainer/CustomerCrudContainer';
 import ProductForm from './ProductForm/ProductForm';
@@ -14,4 +15,5 @@ export {
     ProductCrudContainer,
     EmployeeForm,
     EmployeeCrudContainer,
+    SearchInput,
 }
