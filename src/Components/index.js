@@ -8,6 +8,8 @@ import EmployeeForm from './EmployeeForm/EmployeeForm';
 import EmployeeCrudContainer from './EmployeeCrudContainter/EmployeeCrudContainer';
 import CreditForm from './CreditForm/CreditForm';
 import CreditCrudContainer from './CreditCrudContainer/CreditCrudContainer';
+import CustomerContactForm from './CustomerContactForm/CustomerContactForm';
+import CustomerContactCrudContainer from './CustomerContactCrudContainer/CustomerContactCrudContainer';
 
 export {
     CustomerForm,
@@ -20,4 +22,6 @@ export {
     SearchInput,
     CreditForm,
     CreditCrudContainer,
+    CustomerContactForm,
+    CustomerContactCrudContainer,
 }

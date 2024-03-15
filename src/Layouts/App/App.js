@@ -8,6 +8,7 @@ import Customer from '../Customer/Customer';
 import Product from '../Product/Product';
 import Employee from '../Employee/Employee';
 import Credit from '../Credit/Credit';
+import CustomerContact from '../CustomerContact/CustomerContact';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path='/product' element={<Product />}/>
           <Route path='/employee' element={<Employee />}/>
           <Route path='/credit' element={<Credit />}/>
+          <Route path='/customercontact' element={<CustomerContact />}/>
         </Routes>
     </>
   );

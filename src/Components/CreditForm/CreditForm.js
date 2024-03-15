@@ -13,6 +13,7 @@ function CreditForm (props) {
     };
 
     const cancelForm = () => {
+        props.setCreditoId(0)
         props.setValorBuscadorCliente('');
         props.setClienteId(0)
         props.setPlazo(0);

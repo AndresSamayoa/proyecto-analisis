@@ -12,6 +12,7 @@ function Header() {
             <Link to='/product'>Productos</Link>
             <Link to='/employee'>Empleados</Link>
             <Link to='/credit'>Creditos</Link>
+            <Link to='/customercontact'>Contactos de cliente</Link>
         </div>
     </div>
 }
