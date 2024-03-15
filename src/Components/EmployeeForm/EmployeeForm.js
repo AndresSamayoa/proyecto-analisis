@@ -35,9 +35,10 @@ function ProductForm (props) {
         props.setRol(0);
     }
 
-    const submitForm = (e) => {
+    const submitForm = async (e) => {
         e.preventDefault();
-        props.onSubmit();
+        await props.onSubmit();
+        console.log('POST CONSULTA')
     }
 
     return <div className="formContainer">

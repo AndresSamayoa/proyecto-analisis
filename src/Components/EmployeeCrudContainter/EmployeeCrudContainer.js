@@ -2,6 +2,7 @@ import './EmployeeCrudContainer.css'
 
 import DataTable from 'react-data-table-component';
 import { useState } from 'react';
+import axios from 'axios'
 import EmployeeForm from '../EmployeeForm/EmployeeForm';
 
 function EmployeeCrudContainer () {
@@ -92,9 +93,22 @@ function EmployeeCrudContainer () {
         console.log(empleadoId,nombre,apellido,correoElectronico,telefono,direccion);
     };
 
-    const onSubmit = () => {
+    const onSubmit = async () => {
         // Consumir api
         console.log(empleadoId,nombre,apellido,correoElectronico,telefono,direccion,rolId);
+        const respuesta = await axios({
+            url: 'https://jsonplaceholder.typicode.com/todos/1',
+            data: {
+                empleadoId,
+                nombre,
+                apellido,
+                correoElectronico,
+                telefono,
+                direccion,
+                rolId
+            }
+        })
+        console.log(respuesta);
     };
 
     const deleteRow = (employeeId) => {
