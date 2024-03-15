@@ -7,12 +7,13 @@ function SearchInput (props) {
 
     const search = (e) => {
         e.preventDefault();
-        props.searchValue();
+        props.searchValueFunction();
     };
 
     return <div className="inputContainer">
         <input value={props.value} onChange={onChange} />
         <button onClick={search}>Validar</button>
+        {props.messageSearch ? <p>{props.messageSearch}</p> : null}
     </div>
 }
 

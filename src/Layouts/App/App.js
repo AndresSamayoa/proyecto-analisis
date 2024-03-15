@@ -7,6 +7,7 @@ import Dashboard from '../Dashboard/Dashboard';
 import Customer from '../Customer/Customer';
 import Product from '../Product/Product';
 import Employee from '../Employee/Employee';
+import Credit from '../Credit/Credit';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path='/customer' element={<Customer />}/>
           <Route path='/product' element={<Product />}/>
           <Route path='/employee' element={<Employee />}/>
+          <Route path='/credit' element={<Credit />}/>
         </Routes>
     </>
   );

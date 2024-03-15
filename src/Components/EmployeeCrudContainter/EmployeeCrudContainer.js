@@ -2,7 +2,7 @@ import './EmployeeCrudContainer.css'
 
 import DataTable from 'react-data-table-component';
 import { useState } from 'react';
-import axios from 'axios'
+import axios from 'axios';
 import EmployeeForm from '../EmployeeForm/EmployeeForm';
 
 function EmployeeCrudContainer () {
@@ -113,7 +113,7 @@ function EmployeeCrudContainer () {
 
     const deleteRow = (employeeId) => {
         // Consumir api
-        const index = tableData.findIndex(row => row.empleadoId == employeeId)
+        const index = tableData.findIndex(row => row.empleadoId === employeeId)
         console.log(tableData, index);
         const tempDat = [...tableData].splice(index, 1);
         setTableData(tempDat);
