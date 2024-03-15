@@ -10,6 +10,8 @@ import CreditForm from './CreditForm/CreditForm';
 import CreditCrudContainer from './CreditCrudContainer/CreditCrudContainer';
 import CustomerContactForm from './CustomerContactForm/CustomerContactForm';
 import CustomerContactCrudContainer from './CustomerContactCrudContainer/CustomerContactCrudContainer';
+import PaymentForm from './PaymentForm/PaymentForm';
+import PaymentCrudContainer from './PaymentCrudContainer/PaymentCrudContainer';
 
 export {
     CustomerForm,
@@ -24,4 +26,6 @@ export {
     CreditCrudContainer,
     CustomerContactForm,
     CustomerContactCrudContainer,
+    PaymentForm,
+    PaymentCrudContainer,
 }

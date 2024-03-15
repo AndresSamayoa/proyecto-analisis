@@ -13,6 +13,7 @@ function Header() {
             <Link to='/employee'>Empleados</Link>
             <Link to='/credit'>Creditos</Link>
             <Link to='/customercontact'>Contactos de cliente</Link>
+            <Link to='/payment'>Abonos</Link>
         </div>
     </div>
 }
