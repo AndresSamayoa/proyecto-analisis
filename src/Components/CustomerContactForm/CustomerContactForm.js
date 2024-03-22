@@ -44,6 +44,7 @@ function CustomerContactForm (props) {
     return <div className="formContainer">
         <form onSubmit={submitForm} >
         <SearchInput
+            label="Cliente (buscar por email o codigo)"
             value={props.valorBuscadorCliente}
             setValue={props.setValorBuscadorCliente}
             searchValueFunction={props.searchCliente}

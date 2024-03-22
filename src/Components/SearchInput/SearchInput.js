@@ -11,6 +11,7 @@ function SearchInput (props) {
     };
 
     return <div className="inputContainer">
+        <label>{props.label}</label>
         <input value={props.value} onChange={onChange} />
         <button onClick={search}>Validar</button>
         {props.messageSearch ? <p>{props.messageSearch}</p> : null}

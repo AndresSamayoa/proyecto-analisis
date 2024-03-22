@@ -33,6 +33,7 @@ function PaymentForm (props) {
     return <div className="formContainer">
         <form onSubmit={submitForm} >
         <SearchInput
+            label="Venta (buscar por autorizacion o codigo)"
             value={props.valorBuscadorVenta}
             setValue={props.setValorBuscadorVenta}
             searchValueFunction={props.searchVenta}

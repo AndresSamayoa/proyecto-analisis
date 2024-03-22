@@ -92,18 +92,25 @@ function CreditCrudContainer () {
     } 
 
     const searchCliente = async () => {
-        console.log(buscadorCliente);
+        try {
+            console.log(buscadorCliente);
 
-        const respuesta = await axios({
-            url: 'https://jsonplaceholder.typicode.com/todos/1',
-            data: {}
-        })
+            const respuesta = await axios({
+                method: 'POST',
+                url: 'https://localhost:44324/Proyecto-Analisis.asmx/mostrar',
+                validateStatus: status => true
+            })
 
-        if (respuesta.status >= 200 && respuesta.status < 300) {
-            setClienteId(respuesta.data.userId)
-            console.log(clienteId)
-        } else {
-            setMensajeBusqueda('Error: ' + respuesta.status);
+            console.log(respuesta.data)
+            if (respuesta.status >= 200 && respuesta.status < 300) {
+                // setClienteId(respuesta.data.userId)
+                console.log(clienteId)
+            } else {
+                console.log(respuesta.data);
+                setMensajeBusqueda('Error: ' + respuesta.status);
+            }
+        } catch (error) {
+            console.log('Error: ' + error.message)
         }
     }
 
