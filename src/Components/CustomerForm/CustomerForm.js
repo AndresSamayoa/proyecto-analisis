@@ -28,6 +28,7 @@ function CustomerForm (props) {
 
     const cancelForm = (e) => {
         e.preventDefault();
+        console.log('limpio')
         props.setClienteId(0)
         props.setNit('')
         props.setRazonSocial('')
@@ -46,33 +47,33 @@ function CustomerForm (props) {
         <form onSubmit={submitForm} >
             <div className="inputContainer">
                 <label>Nit</label>
-                <input type="text" id="txtNit" defaultValue={props.nit} onChange={changeNit}/>
+                <input type="text" id="txtNit" value={props.nit} onChange={changeNit}/>
             </div>
             <div className="inputContainer">
                 <label>Razon social</label>
-                <input type="text" id="txtRazonSocial" defaultValue={props.razonSocial} onChange={changeRazonSocial}/>
+                <input type="text" id="txtRazonSocial" value={props.razonSocial} onChange={changeRazonSocial}/>
             </div>
             <div className="inputContainer">
                 <label>Direccion fiscal</label>
-                <input type="text" id="txtDireccionFiscal" defaultValue={props.direccionFiscal} onChange={changeDireccionFiscal}/>
+                <input type="text" id="txtDireccionFiscal" value={props.direccionFiscal} onChange={changeDireccionFiscal}/>
             </div>
             <div className="inputContainer">
                 <label>Correo electronico</label>
-                <input type="text" id="txtCorreoElectronico" defaultValue={props.correoElectronico} onChange={changeCorreoElectronico}/>
+                <input type="text" id="txtCorreoElectronico" value={props.correoElectronico} onChange={changeCorreoElectronico}/>
             </div>
             <div className="inputContainer">
                 <label>Telefono</label>
-                <input type="text" id="txtTelefono" defaultValue={props.telefono} onChange={changeTelefono}/>
+                <input type="text" id="txtTelefono" value={props.telefono} onChange={changeTelefono}/>
             </div>
             <div className="inputContainer">
                 <label>Tipo de cliente</label>
                 <select id="cbTipo"  value={props.tipoCliente} onChange={changeTipoCliente}>
-                    <option>Persona</option>
-                    <option>Juridico</option>
+                    <option>persona</option>
+                    <option>juridico</option>
                 </select>
             </div>
             <div className="inputContainer">
-                <input type="submit" value="Crear" />
+                <input type="submit" value={props.clienteId > 0 ? "Actualizar" : "Crear"} />
                 <input type="submit" value="Cancelar" onClick={cancelForm}/>
             </div>
         </form>

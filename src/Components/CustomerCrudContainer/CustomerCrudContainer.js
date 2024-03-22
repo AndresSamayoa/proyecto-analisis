@@ -1,9 +1,14 @@
 import './CustomerCrudContainer.css'
 
 import DataTable from 'react-data-table-component';
-import { useState } from 'react';
+import axios from 'axios';
+import XMLParser from 'react-xml-parser';
+import querystring from 'querystring';
+import { useState, useEffect } from 'react';
 
 import CustomerForm from '../CustomerForm/CustomerForm';
+
+const net_base_url = process.env.REACT_APP_DOT_NET_API_BASE;
 
 const CustomerCrudContainer = () => {
     const columns = [
@@ -48,36 +53,47 @@ const CustomerCrudContainer = () => {
             selector: row => row.tipoCliente,
         },
     ];
-    
-    const data = [
-        {
-            clienteId: 1,
-            nit: '1234567890',
-            razonSocial: 'Empresa 1',
-            direccionFiscal: 'Ciudad',
-            tipoCliente: 'Juridico',
-            correoElectronico: 'empresa1@mail.com',
-            telefono: '12345678',
-        },
-        {
-            clienteId: 2,
-            nit: '0987654321',
-            razonSocial: 'Empresa 2',
-            direccionFiscal: 'Ciudad',
-            tipoCliente: 'Juridico',
-            correoElectronico: 'empresa2@mail.com',
-            telefono: '87654321',
-        }
-    ];
 
     const [clienteId, setClienteId] = useState(0);
     const [nit, setNit] = useState('');
     const [razonSocial, setRazonSocial] = useState('');
     const [direccionFiscal, setDireccionFiscal] = useState('');
-    const [tipoCliente, setTipoCliente] = useState('');
+    const [tipoCliente, setTipoCliente] = useState('persona');
     const [correoElectronico, setCorreoElectronico] = useState('');
     const [telefono, setTelefono] = useState('');
-    const [tableData, setTableData] = useState(data);
+    const [tableData, setTableData] = useState([]);
+
+    const getData = async () => {
+        try {
+            const respuesta = await axios({
+                method: 'POST',
+                url: net_base_url+'/Proyecto-Analisis.asmx/ClientesMostrar',
+                validateStatus: status => true
+            })
+
+            const data = new XMLParser().parseFromString(respuesta.data)
+            // console.log(data.children[1].children[0]);
+            if (respuesta.status >= 200 && respuesta.status < 300) {
+                const tempData = [];
+                for (const item of data.children[1].children[0].children) {
+                    tempData.push({
+                        clienteId: item.children[0].value,
+                        razonSocial: item.children[1].value,
+                        nit: item.children[6].value,
+                        correoElectronico: item.children[4].value,
+                        telefono: item.children[3].value,
+                        direccionFiscal: item.children[2].value,
+                        tipoCliente: item.children[5].value
+                    })
+                }
+                setTableData(tempData);
+            } else {
+                console.log(respuesta.data);
+            }
+        } catch (error) {
+            console.log('Error: ' + error.message)
+        }
+    }
 
     const updateForm = (row) => {
         setClienteId(row.clienteId);
@@ -90,23 +106,99 @@ const CustomerCrudContainer = () => {
         console.log(clienteId,nit,razonSocial,direccionFiscal,tipoCliente,telefono,correoElectronico);
     };
 
-    const onSubmit = () => {
+    const onSubmit = async () => {
         // Consumir api
-        console.log(clienteId,
-            nit,
-            razonSocial,
-            direccionFiscal,
-            tipoCliente
-        );
-    }
+        let url ;
+        let method ;
+        let data ;
 
-    const deleteRow = (customerId) => {
-        // Consumir api
-        const index = tableData.findIndex(row => row.clienteId == customerId)
-        console.log(tableData, index);
-        const tempDat = [...tableData].splice(index, 1);
-        setTableData(tempDat);
-    } 
+        if (clienteId > 0) {
+            url = net_base_url+'Proyecto-Analisis.asmx/Clientesactualizar'
+            method = 'POST';
+            data = querystring.stringify({
+                cli_cliente: clienteId,
+                cli_razon_social: razonSocial,
+                cli_direccion: direccionFiscal,
+                cli_telefono: telefono,
+                cli_correo_electronico: correoElectronico,
+                cli_tipo_cliente: tipoCliente,
+                cli_nit: nit,
+            });
+        } else {
+            url = net_base_url+'/Proyecto-Analisis.asmx/Clientesguardar';
+            method = 'POST';
+            data = querystring.stringify({
+                CLI_RAZON_SOCIAL: razonSocial,
+                CLI_DIRECCION: direccionFiscal,
+                CLI_TELEFONO: telefono,
+                CLI_CORREO_ELECTRONICO: correoElectronico,
+                CLI_TIPO_CLIENTE: tipoCliente,
+                CLI_NIT: nit
+            });
+        }
+
+        console.log(clienteId,nit,razonSocial,direccionFiscal,tipoCliente);
+
+        try {
+            const respuesta = await axios({
+                method: method,
+                url: url,
+                data: data, 
+                headers: { 
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                validateStatus: status => true
+            })
+
+            // const data = new XMLParser().parseFromString(respuesta.data)
+            // console.log(data.children[1].children[0]);
+            if (respuesta.status >= 200 && respuesta.status < 300) {
+                getData();
+                clearForm();
+            } else {
+                console.log(respuesta.data);
+            }
+        } catch (error) {
+            console.log('Error: ' + error.message)
+        }
+    };
+
+    const deleteRow = async (customerId) => {
+        try {
+            const respuesta = await axios({
+                method: 'POST',
+                url: net_base_url+'/Proyecto-Analisis.asmx/ClientesEliminar',
+                data: querystring.stringify({
+                    cli_cliente: customerId
+                }),
+                validateStatus: status => true
+            })
+
+            // const data = new XMLParser().parseFromString(respuesta.data)
+            // console.log(data.children[1].children[0]);
+            if (respuesta.status >= 200 && respuesta.status < 300) {
+               getData();
+            } else {
+                console.log(respuesta.data);
+            }
+        } catch (error) {
+            console.log('Error: ' + error.message)
+        }
+    };
+
+    const clearForm = async () => {
+        setClienteId(0);
+        setNit('');
+        setRazonSocial('');
+        setDireccionFiscal('');
+        setTipoCliente('persona');
+        setCorreoElectronico('');
+        setTelefono('');
+    };
+
+    useEffect(() => {
+        getData();
+      }, []);
 
     return <>
         <div id="formSegment">
