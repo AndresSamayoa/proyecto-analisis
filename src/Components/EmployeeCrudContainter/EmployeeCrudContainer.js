@@ -1,9 +1,13 @@
 import './EmployeeCrudContainer.css'
 
 import DataTable from 'react-data-table-component';
-import { useState } from 'react';
 import axios from 'axios';
+import XMLParser from 'react-xml-parser';
+import querystring from 'querystring';
+import { useState, useEffect } from 'react';
 import EmployeeForm from '../EmployeeForm/EmployeeForm';
+
+const net_base_url = process.env.REACT_APP_DOT_NET_API_BASE;
 
 function EmployeeCrudContainer () {
     
@@ -44,10 +48,10 @@ function EmployeeCrudContainer () {
             name: 'Direccion',
             selector: row => row.direccion,
         },
-        {
-            name: 'Rol',
-            selector: row => row.rolDescripcion,
-        }
+        // {
+        //     name: 'Rol',
+        //     selector: row => row.rolDescripcion,
+        // }
     ];
     
     const data = [
@@ -58,8 +62,6 @@ function EmployeeCrudContainer () {
             correoElectronico: 'empleado@mail.com',
             telefono: '12345678',
             direccion: 'Ciudad',
-            rolDescripcion: 'Vendedor',
-            rolId: 1
         },
         {
             empleadoId: 2,
@@ -68,8 +70,6 @@ function EmployeeCrudContainer () {
             correoElectronico: 'Supervisor@mail.com',
             telefono: '87654321',
             direccion: 'Ciudad',
-            rolDescripcion: 'Supervisor',
-            rolId: 2
         },
     ];
 
@@ -79,8 +79,48 @@ function EmployeeCrudContainer () {
     const [correoElectronico, setCorreoElectronico] = useState('');
     const [telefono, setTelefono] = useState('');
     const [direccion, setDireccion] = useState('');
-    const [rolId, setRolId] = useState(0);
-    const [tableData, setTableData] = useState(data);
+    const [tableData, setTableData] = useState([]);
+
+    const clearForm = () => {
+        setEmpleadoId(0);
+        setNombre('');
+        setApellido('');
+        setCorreoElectronico('');
+        setTelefono('');
+        setDireccion('');
+        
+    };
+
+    const getData = async () => {
+        try {
+            const respuesta = await axios({
+                method: 'POST',
+                url: net_base_url+'/Proyecto-Analisis.asmx/EmpleadosMostrar',
+                validateStatus: status => true
+            })
+
+            const data = new XMLParser().parseFromString(respuesta.data)
+            // console.log(data.children[1].children[0]);
+            if (respuesta.status >= 200 && respuesta.status < 300) {
+                const tempData = [];
+                for (const item of data.children[1].children[0].children) {
+                    tempData.push({
+                        empleadoId: item.children[0].value,
+                        nombre: item.children[1].value,
+                        apellido: item.children[2].value,
+                        correoElectronico: item.children[5].value,
+                        telefono: item.children[3].value,
+                        direccion: item.children[4].value,
+                    })
+                }
+                setTableData(tempData);
+            } else {
+                console.log(respuesta.data);
+            }
+        } catch (error) {
+            console.log('Error: ' + error.message)
+        }
+    }
 
     const updateForm = (row) => {
         setEmpleadoId(row.empleadoId);
@@ -89,35 +129,88 @@ function EmployeeCrudContainer () {
         setCorreoElectronico(row.correoElectronico);
         setTelefono(row.telefono);
         setDireccion(row.direccion);
-        setRolId(row.rolId)
         console.log(empleadoId,nombre,apellido,correoElectronico,telefono,direccion);
     };
 
     const onSubmit = async () => {
-        // Consumir api
-        console.log(empleadoId,nombre,apellido,correoElectronico,telefono,direccion,rolId);
-        const respuesta = await axios({
-            url: 'https://jsonplaceholder.typicode.com/todos/1',
-            data: {
-                empleadoId,
-                nombre,
-                apellido,
-                correoElectronico,
-                telefono,
-                direccion,
-                rolId
+        let url ;
+        let method ;
+        let data ;
+
+        if (empleadoId > 0) {
+            url = net_base_url+'Proyecto-Analisis.asmx/EmpleadosActualizar'
+            method = 'POST';
+            data = querystring.stringify({
+                EMP_EMPLEADO: empleadoId,
+                EMP_NOMBRE: nombre,
+                EMP_APELLIDO: apellido,
+                EMP_TELEFONO: telefono,
+                EMP_DIRECCION: direccion,
+                EMP_CORREO_ELECTRONICO: correoElectronico,
+            });
+        } else {
+            url = net_base_url+'/Proyecto-Analisis.asmx/Empleadosguardar';
+            method = 'POST';
+            data = querystring.stringify({
+                EMP_NOMBRE: nombre,
+                EMP_APELLIDO: apellido,
+                EMP_TELEFONO: telefono,
+                EMP_DIRECCION: direccion,
+                EMP_CORREO_ELECTRONICO: correoElectronico,
+            });
+        }
+        try {
+            const respuesta = await axios({
+                method: method,
+                url: url,
+                data: data, 
+                headers: { 
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                validateStatus: status => true
+            })
+
+            // const data = new XMLParser().parseFromString(respuesta.data)
+            // console.log(data.children[1].children[0]);
+            if (respuesta.status >= 200 && respuesta.status < 300) {
+                getData();
+                clearForm();
+            } else {
+                console.log(respuesta.data);
             }
-        })
-        console.log(respuesta);
+        } catch (error) {
+            console.log('Error: ' + error.message)
+        }
     };
 
-    const deleteRow = (employeeId) => {
-        // Consumir api
-        const index = tableData.findIndex(row => row.empleadoId === employeeId)
-        console.log(tableData, index);
-        const tempDat = [...tableData].splice(index, 1);
-        setTableData(tempDat);
+    const deleteRow = async (employeeId) => {
+        try {
+            console.log(employeeId)
+            const respuesta = await axios({
+                method: 'POST',
+                url: net_base_url+'/Proyecto-Analisis.asmx/EmpleadosEliminar',
+                data: querystring.stringify({
+                    EMP_EMPLEADO: employeeId
+                }),
+                validateStatus: status => true
+            })
+
+            // const data = new XMLParser().parseFromString(respuesta.data)
+            // console.log(data.children[1].children[0]);
+            if (respuesta.status >= 200 && respuesta.status < 300) {
+               getData();
+            } else {
+                console.log(respuesta.data);
+            }
+        } catch (error) {
+            console.log('Error: ' + error.message)
+        }
     } 
+
+    useEffect(() => {
+            getData();
+        }, []
+    );
 
     return <>
         <div id="formSegment">
@@ -129,15 +222,12 @@ function EmployeeCrudContainer () {
                 setCorreoElectronico={setCorreoElectronico}
                 setTelefono={setTelefono}
                 setDireccion={setDireccion}
-                setRol={setRolId}
                 empleadoId={empleadoId}
                 nombre={nombre}
                 apellido={apellido}
                 correoElectronico={correoElectronico}
                 telefono={telefono}
                 direccion={direccion}
-                rol={rolId}
-                rols={[{id: 2, descripcion: 'Supervisor'}, {id: 1, descripcion: 'Vendedor'}]}
             />
         </div>
         <div className="tableSegment">

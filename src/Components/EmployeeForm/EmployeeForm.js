@@ -22,17 +22,18 @@ function ProductForm (props) {
         props.setDireccion(e.target.value);
     };
     
-    const changeRol = (e) => {
+    /*const changeRol = (e) => {
         props.setRol(e.target.value);
-    };
+    };*/
 
     const cancelForm = () => {
+        props.setEmpleadoId(0);
         props.setNombre('');
         props.setApellido('');
         props.setCorreoElectronico('');
         props.setTelefono('');
         props.setDireccion('');
-        props.setRol(0);
+        // props.setRol(0);
     }
 
     const submitForm = async (e) => {
@@ -63,14 +64,14 @@ function ProductForm (props) {
             <label>Direccion</label>
             <input type="text" id="txtDireccion" value={props.direccion} onChange={changeDireccion}/>
         </div>
-        <div className="inputContainer">
+        {/* <div className="inputContainer">
             <label>Rol</label>
             <select id="cbRol"  value={props.rol} onChange={changeRol}>
                 {props.rols.map((item, index) => (
                     <option key={index} value={item.id}>{item.descripcion}</option>
                 ))}
             </select>
-        </div>
+        </div> */}
         <div className="inputContainer">
             <input type="submit" value={props.empleadoId > 0 ? "Actualizar" : "Crear"} />
             <input type="submit" value="Cancelar" onClick={cancelForm}/>
