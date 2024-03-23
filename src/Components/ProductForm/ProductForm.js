@@ -14,7 +14,8 @@ function ProductForm (props) {
         props.setDescripcion(e.target.value);
     };
 
-    const cancelForm = () => {
+    const cancelForm = (e) => {
+        e.preventDefault();
         props.setDescripcion('');
         props.setPrecio(0);
         props.setCantidad(0);
