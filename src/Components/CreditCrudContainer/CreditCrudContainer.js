@@ -1,10 +1,14 @@
 import './CreditCrudContainer.css'
 
 import DataTable from 'react-data-table-component';
-import { useState } from 'react';
 import axios from 'axios';
+import XMLParser from 'react-xml-parser';
+import querystring from 'querystring';
+import { useState, useEffect } from 'react';
 
 import CreditForm from '../CreditForm/CreditForm';
+
+const net_base_url = process.env.REACT_APP_DOT_NET_API_BASE;
 
 function CreditCrudContainer () {
     
@@ -62,7 +66,37 @@ function CreditCrudContainer () {
     const [credito, setCredito] = useState(0);
     const [plazo, setPlazo] = useState(0);
     const [mensajeBusqueda, setMensajeBusqueda] = useState('');
-    const [tableData, setTableData] = useState(data);
+    const [tableData, setTableData] = useState([]);
+
+    const getData = async () => {
+        try {
+            const respuesta = await axios({
+                method: 'POST',
+                url: net_base_url+'/Proyecto-Analisis.asmx/CREDITOSMostrar',
+                validateStatus: status => true
+            })
+
+            const data = new XMLParser().parseFromString(respuesta.data)
+            // console.log(data.children[1].children[0]);
+            if (respuesta.status >= 200 && respuesta.status < 300) {
+                const tempData = [];
+                for (const item of data.children[1].children[0].children) {
+                    tempData.push({
+                        creditoId: item.children[0].value,
+                        clienteId: item.children[1].value,
+                        nombreCliente: item.children[2].value,
+                        credito: item.children[3].value,
+                        plazo: item.children[4].value,
+                    })
+                }
+                setTableData(tempData);
+            } else {
+                console.log(respuesta.data);
+            }
+        } catch (error) {
+            console.log('Error: ' + error.message)
+        }
+    }
 
     const updateForm = (row) => {
         setCreditoId(row.creditoId);
@@ -73,46 +107,121 @@ function CreditCrudContainer () {
         console.log(creditoId,clienteId,buscadorCliente,credito,plazo);
     };
 
-    const onSubmit = () => {
-        // Consumir api
-        console.log(
-            clienteId,
-            buscadorCliente,
-            credito,
-            plazo,
-        );
+    const clearForm = async () => {
+        setCreditoId(0);
+        setClienteId(0);
+        setBuscadorCliente('');
+        setCredito('');
+        setPlazo('');
+        setMensajeBusqueda('');
     };
 
-    const deleteRow = (creditId) => {
-        // Consumir api
-        const index = tableData.findIndex(row => row.creditoId === creditId)
-        console.log(tableData, index);
-        const tempDat = [...tableData].splice(index, 1);
-        setTableData(tempDat);
-    } 
+    const onSubmit = async () => {
+        let url ;
+        let method ;
+        let data ;
 
-    const searchCliente = async () => {
+        if (creditoId > 0) {
+            url = net_base_url+'Proyecto-Analisis.asmx/CREDITOSActualizar'
+            method = 'POST';
+            data = querystring.stringify({
+                cre_credito: creditoId,
+                cli_cliente: clienteId,
+                cre_credito_disponible: credito,
+                cre_plazo: plazo
+            });
+        } else {
+            url = net_base_url+'/Proyecto-Analisis.asmx/CREDITOSGuardar';
+            method = 'POST';
+            data = querystring.stringify({
+                CLI_CLIENTE: clienteId,
+                CRE_CREDITO_DISPONIBLE: credito,
+                CRE_PLAZO: plazo
+            });
+        }
+
         try {
-            console.log(buscadorCliente);
-
             const respuesta = await axios({
-                method: 'POST',
-                url: 'https://localhost:44324/Proyecto-Analisis.asmx/mostrar',
+                method: method,
+                url: url,
+                data: data, 
+                headers: { 
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
                 validateStatus: status => true
             })
 
-            console.log(respuesta.data)
+            // const data = new XMLParser().parseFromString(respuesta.data)
+            // console.log(data.children[1].children[0]);
             if (respuesta.status >= 200 && respuesta.status < 300) {
-                // setClienteId(respuesta.data.userId)
-                console.log(clienteId)
+                console.log(respuesta.data);
+                getData();
+                clearForm();
             } else {
                 console.log(respuesta.data);
-                setMensajeBusqueda('Error: ' + respuesta.status);
             }
         } catch (error) {
             console.log('Error: ' + error.message)
         }
+    };
+
+    const deleteRow = async (creditId) => {
+        try {
+            const respuesta = await axios({
+                method: 'POST',
+                url: net_base_url+'/Proyecto-Analisis.asmx/CREDITOSEliminar',
+                data: querystring.stringify({
+                    cre_credito: creditId
+                }),
+                validateStatus: status => true
+            })
+
+            // const data = new XMLParser().parseFromString(respuesta.data)
+            // console.log(data.children[1].children[0]);
+            if (respuesta.status >= 200 && respuesta.status < 300) {
+               getData();
+            } else {
+                console.log(respuesta.data);
+            }
+        } catch (error) {
+            console.log('Error: ' + error.message)
+        }
+    } 
+
+    const searchCliente = async () => {
+        try {
+            const respuesta = await axios({
+                method: 'POST',
+                url: net_base_url+'/Proyecto-Analisis.asmx/ClienteBuscar',
+                data: querystring.stringify({
+                    cli_cliente: buscadorCliente,
+                }),
+                validateStatus: status => true
+            })
+
+            const data = new XMLParser().parseFromString(respuesta.data)
+            if (respuesta.status >= 200 && respuesta.status < 300) {
+                const tempData = [];
+                if (data.children[1].children[0].children[0]) {
+                    setClienteId(data.children[1].children[0].children[0].children[0].value);
+                    setMensajeBusqueda('Cliente encontrado');
+                } else {
+                    setMensajeBusqueda('Cliente no encontrado');
+                }
+            } else {
+                setMensajeBusqueda('Cliente no encontrado');
+                console.log(respuesta.data);
+            }
+        } catch (error) {
+            setMensajeBusqueda('Cliente no encontrado');
+            console.log('Error: ' + error.message)
+        }
     }
+
+    useEffect(() => {
+            getData();
+        }, []
+    );
 
     return <>
         <div id="formSegment">
