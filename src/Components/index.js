@@ -12,6 +12,10 @@ import CustomerContactForm from './CustomerContactForm/CustomerContactForm';
 import CustomerContactCrudContainer from './CustomerContactCrudContainer/CustomerContactCrudContainer';
 import PaymentForm from './PaymentForm/PaymentForm';
 import PaymentCrudContainer from './PaymentCrudContainer/PaymentCrudContainer';
+import SaleForm from './SaleForm/SaleForm';
+import SaleCrudContainer from './SaleCrudContainer/SaleCrudContainer';
+import SaleDetailForm from './SaleDetailForm/SaleDetailForm';
+import SaleDetailCrudContainer from './SaleDetailCrudContainer/SaleDetailCrudContainer';
 
 export {
     CustomerForm,
@@ -28,4 +32,8 @@ export {
     CustomerContactCrudContainer,
     PaymentForm,
     PaymentCrudContainer,
+    SaleForm,
+    SaleCrudContainer,
+    SaleDetailForm,
+    SaleDetailCrudContainer,
 }

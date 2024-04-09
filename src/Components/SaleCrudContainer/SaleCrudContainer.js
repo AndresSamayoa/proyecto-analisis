@@ -7,6 +7,7 @@ import querystring from 'querystring';
 import { useState, useEffect } from 'react';
 
 import SaleForm from '../SaleForm/SaleForm'
+import SaleDetailCrudContainer from '../SaleDetailCrudContainer/SaleDetailCrudContainer'
 
 const net_base_url = process.env.REACT_APP_DOT_NET_API_BASE;
 
@@ -265,30 +266,38 @@ function SaleCrudContainer () {
     );
 
     return <>
-        <div>
-            <SaleForm 
-                onSubmit={onSubmit}
-                cancelForm={clearForm}
-                searchCliente={searchCliente}
-                searchEmpleado={searchEmpleado}
-                ventaId={ventaId}
-                numeroAutorizacion={numeroAutorizacion}
-                condicionPago={condicionPago}
-                buscadorCliente={buscadorCliente}
-                mensajeBusquedaCliente={mensajeBuscadorCliente}
-                buscadorEmpleado={buscadorEmpleado}
-                mensajeBusquedaEmpleado={mensajeBuscadorEmpleado}
-                setVentaId={setVentaId}
-                setNumeroAutorizacion={setNumeroAutorizacion}
-                setCondicionPago={setCondicionPago}
-                setValorBuscadorEmpleado={setBuscadorEmpleado}
-                setValorBuscadorCliente={setBuscadorCliente}
-            />
+        <div className='controlSegment'>
+            <div>
+                <SaleForm 
+                    onSubmit={onSubmit}
+                    cancelForm={clearForm}
+                    searchCliente={searchCliente}
+                    searchEmpleado={searchEmpleado}
+                    ventaId={ventaId}
+                    numeroAutorizacion={numeroAutorizacion}
+                    condicionPago={condicionPago}
+                    buscadorCliente={buscadorCliente}
+                    mensajeBusquedaCliente={mensajeBuscadorCliente}
+                    buscadorEmpleado={buscadorEmpleado}
+                    mensajeBusquedaEmpleado={mensajeBuscadorEmpleado}
+                    setVentaId={setVentaId}
+                    setNumeroAutorizacion={setNumeroAutorizacion}
+                    setCondicionPago={setCondicionPago}
+                    setValorBuscadorEmpleado={setBuscadorEmpleado}
+                    setValorBuscadorCliente={setBuscadorCliente}
+                />
+            </div>
+            <div className="tableSegment">
+                <DataTable columns={columns} data={tableData}/>
+            </div>
         </div>
-        <div className="tableSegment">
-            <DataTable columns={columns} data={tableData}/>
-        </div>
+        
+        {ventaId > 0 && 
+            <div className='controlSegment'>
+                <SaleDetailCrudContainer ventaId={ventaId}/>
+            </div>
+        }
     </>
 };
 
-module.exports = SaleCrudContainer;
+export default SaleCrudContainer;

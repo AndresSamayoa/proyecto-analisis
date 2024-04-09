@@ -2,11 +2,16 @@ import './SaleForm.css';
 
 import SearchInput from '../SearchInput/SearchInput';
 
-function ProductForm (props) {
+function SaleForm (props) {
     const cancelForm = (e) => {
         e.preventDefault();
         props.setNumeroAutorizacion('');
         props.setCondicionPago('');
+    }
+    
+    const submitForm = (e) => {
+        e.preventDefault();
+        props.onSubmit();
     }
 
     const changeNumeroAutorizacion = (e) =>{
@@ -52,4 +57,4 @@ function ProductForm (props) {
     </div>
 }
 
-module.exports = ProductForm;
+export default SaleForm;
