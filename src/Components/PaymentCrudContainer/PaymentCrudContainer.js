@@ -1,10 +1,13 @@
 import './PaymentCrudContainer.css'
 
 import DataTable from 'react-data-table-component';
-import { useState } from 'react';
+import XMLParser from 'react-xml-parser';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 import PaymentForm from '../PaymentForm/PaymentForm';
+
+const net_base_url = process.env.REACT_APP_DOT_NET_API_BASE;
 
 function PaymentCrudContainer () {
     
@@ -69,7 +72,38 @@ function PaymentCrudContainer () {
     const [valor, setValor] = useState(0);
     const [tipoPago, setTipoPago] = useState(0);
     const [mensajeBusqueda, setMensajeBusqueda] = useState('');
-    const [tableData, setTableData] = useState(data);
+    const [tableData, setTableData] = useState([]);
+
+    const getData = async () => {
+        try {
+            const respuesta = await axios({
+                method: 'POST',
+                url: net_base_url+'/Proyecto-Analisis.asmx/AbonosMostrar',
+                validateStatus: status => true
+            })
+
+            const data = new XMLParser().parseFromString(respuesta.data)
+            // console.log(data.children[1].children[0]);
+            if (respuesta.status >= 200 && respuesta.status < 300) {
+                const tempData = [];
+                for (const item of data.children[1].children[0].children) {
+                    tempData.push({
+                        abonoId: item.children[0].value,
+                        ventaId: item.children[1].value,
+                        numeroAutorizacionVenta: item.children[2].value,
+                        valor: item.children[5].value,
+                        tipoPago: item.children[3].value,
+                        numeroAutorizacion: item.children[4].value,
+                    })
+                }
+                setTableData(tempData);
+            } else {
+                console.log(respuesta.data);
+            }
+        } catch (error) {
+            console.log('Error: ' + error.message)
+        }
+    }
 
     const updateForm = (row) => {
         setAbonoId(row.abonoId);
@@ -81,17 +115,77 @@ function PaymentCrudContainer () {
         console.log(abonoId,ventaId,buscadorVenta,numeroAutorizacion,valor,tipoPago);
     };
 
-    const onSubmit = () => {
-        // Consumir api
-        console.log(abonoId,ventaId,buscadorVenta,numeroAutorizacion,valor,tipoPago);
+    const onSubmit = async () => {
+        let url ;
+        let method ;
+        let data ;
+
+        if (abonoId > 0) {
+            url = net_base_url+'Proyecto-Analisis.asmx/AbonosActualizar'
+            method = 'POST';
+            data = querystring.stringify({
+                abo_abono: abonoId,
+                abo_venta: ventaId,
+                abo_numero_autorizacion: numeroAutorizacion,
+                abo_valor: valor,
+                abo_tipo_pago: tipoPago,
+            });
+        } else {
+            url = net_base_url+'/Proyecto-Analisis.asmx/Abonosguardar';
+            method = 'POST';
+            data = querystring.stringify({
+                abo_venta: ventaId,
+                abo_numero_autorizacion: numeroAutorizacion,
+                abo_valor: valor,
+                abo_tipo_pago: tipoPago,
+            });
+        }
+        try {
+            const respuesta = await axios({
+                method: method,
+                url: url,
+                data: data, 
+                headers: { 
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                validateStatus: status => true
+            })
+
+            // const data = new XMLParser().parseFromString(respuesta.data)
+            // console.log(data.children[1].children[0]);
+            if (respuesta.status >= 200 && respuesta.status < 300) {
+                getData();
+                clearForm();
+            } else {
+                console.log(respuesta.data);
+            }
+        } catch (error) {
+            console.log('Error: ' + error.message)
+        }
     };
 
-    const deleteRow = (paymentId) => {
-        // Consumir api
-        const index = tableData.findIndex(row => row.abonoId === paymentId)
-        console.log(tableData, index);
-        const tempDat = [...tableData].splice(index, 1);
-        setTableData(tempDat);
+    const deleteRow = async (paymentId) => {
+        try {
+            console.log(employeeId)
+            const respuesta = await axios({
+                method: 'POST',
+                url: net_base_url+'/Proyecto-Analisis.asmx/CreditosEliminar',
+                data: querystring.stringify({
+                    abo_abono: paymentId
+                }),
+                validateStatus: status => true
+            })
+
+            // const data = new XMLParser().parseFromString(respuesta.data)
+            // console.log(data.children[1].children[0]);
+            if (respuesta.status >= 200 && respuesta.status < 300) {
+               getData();
+            } else {
+                console.log(respuesta.data);
+            }
+        } catch (error) {
+            console.log('Error: ' + error.message)
+        }
     } 
 
     const searchVenta = async () => {
@@ -109,6 +203,11 @@ function PaymentCrudContainer () {
             setMensajeBusqueda('Error: ' + respuesta.status);
         }
     }
+
+    useEffect(() => {
+        getData();
+        }, []
+    );
 
     return <>
         <div id="formSegment">
