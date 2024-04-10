@@ -83,7 +83,6 @@ function DocumentForm (props) {
         <div className="inputContainer">
             <input type="submit" value={props.creditoId > 0 ? "Actualizar" : "Crear"} />
             <input type="submit" value="Cancelar" onClick={cancelForm}/>
-            <button>TEST</button>
         </div>
         </form>
     </div>
