@@ -11,6 +11,7 @@ import Credit from '../Credit/Credit';
 import CustomerContact from '../CustomerContact/CustomerContact';
 import Sale from '../Sale/Sale';
 import Payment from '../Payment/Payment';
+import Document from '../Document/Document';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path='/customercontact' element={<CustomerContact />}/>
           <Route path='/payment' element={<Payment />}/>
           <Route path='/sale' element={<Sale />}/>
+          <Route path='/document' element={<Document />}/>
         </Routes>
     </>
   );

@@ -16,6 +16,8 @@ import SaleForm from './SaleForm/SaleForm';
 import SaleCrudContainer from './SaleCrudContainer/SaleCrudContainer';
 import SaleDetailForm from './SaleDetailForm/SaleDetailForm';
 import SaleDetailCrudContainer from './SaleDetailCrudContainer/SaleDetailCrudContainer';
+import DocumentForm from './DocumentForm/DocumentForm';
+import DocumentCrudContainer from './DocumentCrudContainer/DocumentCrudContainer';
 
 export {
     CustomerForm,
@@ -36,4 +38,6 @@ export {
     SaleCrudContainer,
     SaleDetailForm,
     SaleDetailCrudContainer,
+    DocumentForm,
+    DocumentCrudContainer,
 }
