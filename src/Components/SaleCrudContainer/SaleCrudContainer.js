@@ -30,6 +30,16 @@ function SaleCrudContainer () {
             },
         },
         {
+            name: '',
+            selector: row => {
+                return <button disabled={row.cerrado > 0} onClick={() => {closeRow(row.ventaId)}} >Cerrar</button>
+            },
+        },
+        {
+            name: 'Cerrado',
+            selector: row => row.cerrado > 0 ? 'Si' : 'No',
+        },
+        {
             name: 'Razon social cliente',
             selector: row => row.nombreCliente,
         },
@@ -48,10 +58,6 @@ function SaleCrudContainer () {
         {
             name: 'Valor total',
             selector: row => row.valorTotal,
-        },
-        {
-            name: 'Cerrado',
-            selector: row => row.cerrado ? 'Si' : 'no',
         },
     ];
 
@@ -72,7 +78,7 @@ function SaleCrudContainer () {
         try {
             const respuesta = await axios({
                 method: 'POST',
-                url: net_base_url+'/Proyecto-Analisis.asmx/VENTASMostrar',
+                url: net_base_url+'/CXC_Venta.asmx/VentaMostrar',
                 validateStatus: status => true
             })
 
@@ -82,15 +88,15 @@ function SaleCrudContainer () {
                 const tempData = [];
                 for (const item of data.children[1].children[0].children) {
                     tempData.push({
-                        ventaId: item.children[0].value,
-                        clienteId: item.children[1].value,
-                        nombreCliente: item.children[2].value,
-                        empleadoId: item.children[3].value,
-                        nombreEmpleado: item.children[4].value,
-                        condicionPago: item.children[5].value,
-                        numeroAutorizacion: item.children[6].value,
-                        valorTotal: item.children[7].value,
-                        cerrado: item.children[8].value,
+                        ventaId: item.children.find(obj => obj.name === 'VEN_VENTA').value,//[0].value,
+                        clienteId: item.children.find(obj => obj.name === 'VEN_CLIENTE').value,
+                        nombreCliente: item.children.find(obj => obj.name === 'CLI_RAZON_SOCIAL').value,
+                        empleadoId: item.children.find(obj => obj.name === 'VEN_EMPLEADO').value,
+                        nombreEmpleado: item.children.find(obj => obj.name === 'EMP_NOMBRES').value,
+                        condicionPago: item.children.find(obj => obj.name === 'VEN_CONDICION_PAGO').value,
+                        numeroAutorizacion: item.children.find(obj => obj.name === 'VEN_NO_AUTORIZACION').value,
+                        valorTotal: item.children.find(obj => obj.name === 'VEN_TOTAL').value,
+                        cerrado: item.children.find(obj => obj.name === 'VEN_CERRADO').value,
                     })
                 }
                 setTableData(tempData);
@@ -103,11 +109,12 @@ function SaleCrudContainer () {
     }
 
     const updateForm = (row) => {
+        console.log(row);
         setVentaId(row.ventaId)
         setClienteId(row.clienteId);
-        setBuscadorCliente(row.nombreCliente);
+        setBuscadorCliente(row.clienteId);
         setEmpleadoId(row.empleadoId);
-        setBuscadorEmpleado(row.nombreEmpleado);
+        setBuscadorEmpleado(row.empleadoId);
         setCondicionPago(row.condicionPago);
         setNumeroAutorizacion(row.numeroAutorizacion);
         setTotal(row.valorTotal);
@@ -133,22 +140,24 @@ function SaleCrudContainer () {
         let method ;
         let data ;
 
-        if (creditoId > 0) {
-            url = net_base_url+'Proyecto-Analisis.asmx/CREDITOSActualizar'
+        if (ventaId > 0) {
+            url = net_base_url+'CXC_Venta.asmx/Ventasactualizar'
             method = 'POST';
             data = querystring.stringify({
-                cre_credito: creditoId,
-                cli_cliente: clienteId,
-                cre_credito_disponible: credito,
-                cre_plazo: plazo
+                p_venta: ventaId,
+                Ven_p_cliente: clienteId,
+                Ven_p_empleado: empleadoId,
+                Ven_p_condicion_pago: condicionPago,
+                Ven_p_no_autorizacion: numeroAutorizacion,
             });
         } else {
-            url = net_base_url+'/Proyecto-Analisis.asmx/CREDITOSGuardar';
+            url = net_base_url+'/CXC_Venta.asmx/Ventaguardar';
             method = 'POST';
             data = querystring.stringify({
-                CLI_CLIENTE: clienteId,
-                CRE_CREDITO_DISPONIBLE: credito,
-                CRE_PLAZO: plazo
+                Ven_p_cliente: clienteId,
+                Ven_p_empleado: empleadoId,
+                Ven_p_condicion_pago: condicionPago,
+                Ven_p_no_autorizacion: numeroAutorizacion,
             });
         }
 
@@ -181,13 +190,13 @@ function SaleCrudContainer () {
         try {
             const respuesta = await axios({
                 method: 'POST',
-                url: net_base_url+'/Proyecto-Analisis.asmx/EMPLEADOSEliminar',
+                url: net_base_url+'/CXC_Venta.asmx/ClientesEliminar',
                 data: querystring.stringify({
-                    ven_venta: saleId
+                    Ven_p_venta: saleId
                 }),
                 validateStatus: status => true
             })
-
+            console.log(respuesta)
             // const data = new XMLParser().parseFromString(respuesta.data)
             // console.log(data.children[1].children[0]);
             if (respuesta.status >= 200 && respuesta.status < 300) {
@@ -198,7 +207,30 @@ function SaleCrudContainer () {
         } catch (error) {
             console.log('Error: ' + error.message)
         }
-    } 
+    }
+
+    const closeRow = async (saleId) => {
+        try {
+            const respuesta = await axios({
+                method: 'POST',
+                url: net_base_url+'/CXC_Venta.asmx/VentaCerrar',
+                data: querystring.stringify({
+                    Cerrar_p_venta: saleId
+                }),
+                validateStatus: status => true
+            })
+            console.log(respuesta)
+            // const data = new XMLParser().parseFromString(respuesta.data)
+            // console.log(data.children[1].children[0]);
+            if (respuesta.status >= 200 && respuesta.status < 300) {
+               getData();
+            } else {
+                console.log(respuesta.data);
+            }
+        } catch (error) {
+            console.log('Error: ' + error.message)
+        }
+    }
 
     const searchCliente = async () => {
         try {
@@ -241,6 +273,7 @@ function SaleCrudContainer () {
                 validateStatus: status => true
             })
 
+            console.log(respuesta)
             const data = new XMLParser().parseFromString(respuesta.data)
             if (respuesta.status >= 200 && respuesta.status < 300) {
                 const tempData = [];
@@ -276,9 +309,9 @@ function SaleCrudContainer () {
                     ventaId={ventaId}
                     numeroAutorizacion={numeroAutorizacion}
                     condicionPago={condicionPago}
-                    buscadorCliente={buscadorCliente}
+                    valorBuscadorCliente={buscadorCliente}
                     mensajeBusquedaCliente={mensajeBuscadorCliente}
-                    buscadorEmpleado={buscadorEmpleado}
+                    valorBuscadorEmpleado={buscadorEmpleado}
                     mensajeBusquedaEmpleado={mensajeBuscadorEmpleado}
                     setVentaId={setVentaId}
                     setNumeroAutorizacion={setNumeroAutorizacion}

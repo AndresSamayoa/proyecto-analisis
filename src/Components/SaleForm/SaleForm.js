@@ -45,8 +45,8 @@ function SaleForm (props) {
             <div className="inputContainer">
                 <label>Condicion de pago</label>
                 <select id="cbTipo"  value={props.condicionPago} onChange={changeCondicionPago}>
-                    <option>persona</option>
-                    <option>juridico</option>
+                    <option>credito</option>
+                    <option>contado</option>
                 </select>
             </div>
             <div className="inputContainer">
