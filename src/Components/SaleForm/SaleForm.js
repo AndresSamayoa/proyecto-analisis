@@ -5,8 +5,7 @@ import SearchInput from '../SearchInput/SearchInput';
 function SaleForm (props) {
     const cancelForm = (e) => {
         e.preventDefault();
-        props.setNumeroAutorizacion('');
-        props.setCondicionPago('');
+        props.cancelForm();
     }
     
     const submitForm = (e) => {
