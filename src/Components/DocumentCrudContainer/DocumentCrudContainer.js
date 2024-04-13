@@ -31,13 +31,13 @@ const DocumentCrudContainer = () => {
         {
             name: '',
             selector: row => {
-                return <button disabled={!row.fechaAnulacion} onClick={() => {cancelRow(row.documentoId)}} >Anular</button>
+                return <button disabled={!row.fechaEmision} onClick={() => {cancelRow(row.documentoId)}} >Anular</button>
             },
         },
         {
             name: '',
             selector: row => {
-                return <button disabled={!row.fechaEmision} onClick={() => {issueRow(row.documentoId)}} >Emitir</button>
+                return <button disabled={row.fechaEmision && !row.fechaAnulacion} onClick={() => {issueRow(row.documentoId)}} >Emitir</button>
             },
         },
         {
@@ -93,7 +93,7 @@ const DocumentCrudContainer = () => {
         try {
             const respuesta = await axios({
                 method: 'POST',
-                url: net_base_url+'/Proyecto-Analisis.asmx/ClientesMostrar',
+                url: net_base_url+'/CXC_Documento.asmx/DocumentosMostrar',
                 validateStatus: status => true
             })
 
@@ -103,16 +103,16 @@ const DocumentCrudContainer = () => {
                 const tempData = [];
                 for (const item of data.children[1].children[0].children) {
                     tempData.push({
-                        documentoId: item.children[0].value,
-                        ventaId: item.children[1].value,
-                        numeroAutorizacion: item.children[2].value,
-                        documentoReferenciaId: item.children[3].value,
-                        valor: item.children[4].value,
-                        numeroEmision: item.children[5].value,
-                        serieEmision: item.children[6].value,
-                        fechaEmision: item.children[7].value,
-                        fechaAnulacion: item.children[8].value,
-                        tipoDocumento: item.children[9].value,
+                        documentoId: item.children.find(obj => obj.name === 'DOC_DOCUMENTO') ? item.children.find(obj => obj.name === 'DOC_DOCUMENTO').value : null,
+                        ventaId: item.children.find(obj => obj.name === 'DOC_VENTA') ? item.children.find(obj => obj.name === 'DOC_VENTA').value : null,
+                        numeroAutorizacion: item.children.find(obj => obj.name === 'VEN_NO_AUTORIZACION') ? item.children.find(obj => obj.name === 'VEN_NO_AUTORIZACION').value : null,
+                        documentoReferenciaId: item.children.find(obj => obj.name === 'DOC_DOCUMENTO_ASOCIADO') ? item.children.find(obj => obj.name === 'DOC_DOCUMENTO_ASOCIADO').value : null,
+                        valor: item.children.find(obj => obj.name === 'DOC_VALOR') ? item.children.find(obj => obj.name === 'DOC_VALOR').value : null,
+                        numeroEmision: item.children.find(obj => obj.name === 'DOC_NO_DOCUMENTO') ? item.children.find(obj => obj.name === 'DOC_NO_DOCUMENTO').value : null,
+                        serieEmision: item.children.find(obj => obj.name === 'DOC_NO_EMISION') ? item.children.find(obj => obj.name === 'DOC_NO_EMISION').value : null,
+                        fechaEmision: item.children.find(obj => obj.name === 'DOC_FECHA_EMISION') ? item.children.find(obj => obj.name === 'DOC_FECHA_EMISION').value : null,
+                        fechaAnulacion: item.children.find(obj => obj.name === 'DOC_FECHA_ANULACION') ? item.children.find(obj => obj.name === 'DOC_FECHA_ANULACION').value : null,
+                        tipoDocumento: item.children.find(obj => obj.name === 'DOC_TIPO_DOCUMENTO') ? item.children.find(obj => obj.name === 'DOC_TIPO_DOCUMENTO').value : null,
                     })
                 }
                 setTableData(tempData);
@@ -147,29 +147,32 @@ const DocumentCrudContainer = () => {
         let data ;
 
         if (documentoId > 0) {
-            url = net_base_url+'Proyecto-Analisis.asmx/DocumentosActualizar'
+            url = net_base_url+'/CXC_Documento.asmx/Documentoactualizar'
             method = 'POST';
             data = querystring.stringify({
-                doc_documento: documentoId,
-                doc_venta: ventaId,
-                doc_documento_asociado: documentoReferenciaId,
-                doc_valor: valor,
-                doc_numero_emision: numeroEmision,
-                doc_serie_emision: serieEmision,
-                doc_tipo_documento: tipoDocumento,
+                p_documento: documentoId,
+                pDoc_venta: ventaId,
+                pDoc_documento_asociado: documentoReferenciaId,
+                pDoc_valor: valor,
+                pDoc_no_documento: numeroEmision,
+                pDoc_no_emision: serieEmision,
+                pDoc_tipo_documento: tipoDocumento,
             });
         } else {
-            url = net_base_url+'/Proyecto-Analisis.asmx/DocumentosGuardar';
+            url = net_base_url+'/CXC_Documento.asmx/Documentoguardar';
             method = 'POST';
             data = querystring.stringify({
-                doc_venta: ventaId,
-                doc_documento_asociado: documentoReferenciaId,
-                doc_valor: valor,
-                doc_numero_emision: numeroEmision,
-                doc_serie_emision: serieEmision,
-                doc_tipo_documento: tipoDocumento,
+                pDoc_venta: ventaId,
+                pDoc_documento_asociado: documentoReferenciaId,
+                pDoc_valor: valor,
+                pDoc_no_documento: numeroEmision || null,
+                pDoc_no_emision: serieEmision ||  null,
+                pDoc_tipo_documento: tipoDocumento,
+                pDoc_valor_total: 0
             });
         }
+
+        console.log(url, method)
 
         try {
             const respuesta = await axios({
@@ -199,9 +202,9 @@ const DocumentCrudContainer = () => {
         try {
             const respuesta = await axios({
                 method: 'POST',
-                url: net_base_url+'/Proyecto-Analisis.asmx/DocumentosEliminar',
+                url: net_base_url+'/CXC_Documento.asmx/ClientesEliminar',
                 data: querystring.stringify({
-                    doc_documento: documentId
+                    p_documento: documentId
                 }),
                 validateStatus: status => true
             })
@@ -269,7 +272,7 @@ const DocumentCrudContainer = () => {
         setVentaId(0);
         setBuscadorVenta('');
         setMensajeBuscadorVenta('');
-        setDocumentoReferenciaId(0);
+        setDocumentoReferenciaId(null);
         setBuscadorDocumentoReferenciaId('');
         setMensajeBuscadorDocumentoReferencia('');
         setValor(0);
@@ -280,6 +283,65 @@ const DocumentCrudContainer = () => {
         setTipoDocumento('Factura');
     };
 
+    const buscarVenta = async () => {
+        try {
+            const respuesta = await axios({
+                method: 'POST',
+                url: net_base_url+'/CXC_Venta.asmx/VentaBuscar',
+                data: querystring.stringify({
+                    Venta_ID: buscadorVenta,
+                }),
+                validateStatus: status => true
+            })
+
+            const data = new XMLParser().parseFromString(respuesta.data)
+            if (respuesta.status >= 200 && respuesta.status < 300) {
+                console.log(data.children[1].children[0].children[0])
+                if (data.children[1].children[0].children[0]) {
+                    setVentaId(data.children[1].children[0].children[0].children.find(obj => obj.name === 'VEN_VENTA').value);
+                    setMensajeBuscadorVenta('Venta encontrada');
+                } else {
+                    setMensajeBuscadorVenta('Venta no encontrada');
+                }
+            } else {
+                setMensajeBuscadorVenta('Venta no encontrada');
+                console.log(respuesta.data);
+            }
+        } catch (error) {
+            setMensajeBuscadorVenta('Venta no encontrada');
+            console.log('Error: ' + error.message)
+        }
+    }
+
+    const buscarDocumentoReferencia = async () => {
+        try {
+            const respuesta = await axios({
+                method: 'POST',
+                url: net_base_url+'/CXC_Documento.asmx/DocumentoBuscar',
+                data: querystring.stringify({
+                    p_documento: buscadorDocumentoReferencia,
+                }),
+                validateStatus: status => true
+            })
+
+            const data = new XMLParser().parseFromString(respuesta.data)
+            if (respuesta.status >= 200 && respuesta.status < 300) {
+                if (data.children[1].children[0].children[0]) {
+                    setDocumentoReferenciaId(data.children[1].children[0].children[0].children.find(obj => obj.name === 'DOC_DOCUMENTO').value);
+                    setMensajeBuscadorDocumentoReferencia('Documento encontrado');
+                } else {
+                    setMensajeBuscadorDocumentoReferencia('Documento no encontrado');
+                }
+            } else {
+                setMensajeBuscadorDocumentoReferencia('Documento no encontrado');
+                console.log(respuesta.data);
+            }
+        } catch (error) {
+            setMensajeBuscadorDocumentoReferencia('Documento no encontrado');
+            console.log('Error: ' + error.message)
+        }
+    }
+
     useEffect(() => {
         getData();
       }, []);
@@ -288,7 +350,25 @@ const DocumentCrudContainer = () => {
         <div id="formSegment">
            <DocumentForm 
                 onSubmit={onSubmit}
-                
+                clearForm={clearForm}
+                searchVenta={buscarVenta}
+                searchDocumento={buscarDocumentoReferencia}
+                setValorBuscadorVenta={setBuscadorVenta}
+                setValorBuscadorDocumento={setBuscadorDocumentoReferenciaId}
+                setValor={setValor}
+                setNumeroEmision={setNumeroEmision}
+                setSerieEmision={setSerieEmision}
+                setTipoDocumenton={setTipoDocumento}
+                valorBuscadorVenta={buscadorVenta}
+                mensajeBusquedaVenta={mensajeBuscadorVenta}
+                valorBuscadorDocumento={buscadorDocumentoReferencia}
+                mensajeBusquedaDocumento={mensajeBuscadorDocumentoReferencia}
+                valor={valor}
+                numeroEmision={numeroEmision}
+                serieEmision={serieEmision}
+                fechaEmision={fechaEmision}
+                fechaAnulacion={fechaAnulacion}
+                tipoDocumento={tipoDocumento}
             />
         </div>
         <div className="tableSegment">

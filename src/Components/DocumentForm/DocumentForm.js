@@ -20,12 +20,9 @@ function DocumentForm (props) {
         props.setValor(e.target.value);
     };
 
-    const cancelForm = () => {
-        props.setCreditoId(0)
-        props.setValorBuscadorCliente('');
-        props.setClienteId(0)
-        props.setPlazo(0);
-        props.setCredito(0);
+    const cancelForm = (e) => {
+        e.preventDefault();
+        props.clearForm()
     }
 
     const submitForm = (e) => {
@@ -62,22 +59,14 @@ function DocumentForm (props) {
             <input type="number" id="txtSerieEmision" value={props.serieEmision} onChange={changeSerieEmision}/>
         </div>
         <div className="inputContainer">
-            <label>Fecha de emision</label>
-            <input type="date" disabled id="txtFechaEmision" value={props.fechaEmision}/>
-        </div>
-        <div className="inputContainer">
-            <label>Fecha de anulacion</label>
-            <input type="date" disabled id="txtFechaAnulacion" value={props.fechaAnulacion}/>
-        </div>
-        <div className="inputContainer">
             <label>Tipo de documento</label>
             <select id="cbTipo"  value={props.tipoDocumento} onChange={changeTipoDocumento}>
-                <option>Factura</option>
-                <option>Factura cambiaria</option>
-                <option>Factura especial</option>
-                <option>Nota de credito</option>
-                <option>Nota de abono</option>
-                <option>Nota de debito</option>
+                <option value={'factura'}>Factura</option>
+                <option value={'factura cambiaria'}>Factura cambiaria</option>
+                <option value={'factura especial'}>Factura especial</option>
+                <option value={'nota de credito'}>Nota de credito</option>
+                <option value={'nota de abono'}>Nota de abono</option>
+                <option value={'nota de debito'}>Nota de debito</option>
             </select>
         </div>
         <div className="inputContainer">
