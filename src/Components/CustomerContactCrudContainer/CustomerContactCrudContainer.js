@@ -1,10 +1,14 @@
 import './CustomerContactCrudContainer.css'
 
 import DataTable from 'react-data-table-component';
-import { useState } from 'react';
 import axios from 'axios';
+import XMLParser from 'react-xml-parser';
+import querystring from 'querystring';
+import { useState, useEffect } from 'react';
 
 import CustomerContactForm from '../CustomerContactForm/CustomerContactForm';
+
+const net_base_url = process.env.REACT_APP_DOT_NET_API_BASE;
 
 function CustomerContactCrudContainer () {
     
@@ -83,12 +87,12 @@ function CustomerContactCrudContainer () {
     const [telefono2, setTelefono2] = useState('');
     const [telefono3, setTelefono3] = useState('');
     const [mensajeBusqueda, setMensajeBusqueda] = useState('');
-    const [tableData, setTableData] = useState(data);
+    const [tableData, setTableData] = useState([]);
 
     const updateForm = (row) => {
         setContactoId(row.contactoId);
         setClienteId(row.clienteId);
-        setBuscadorCliente(row.nombreCliente);
+        setBuscadorCliente(row.clienteId);
         setNombres(row.nombres);
         setEmail(row.email);
         setTelefono1(row.telefono1);
@@ -97,43 +101,164 @@ function CustomerContactCrudContainer () {
         console.log(contactoId,clienteId,buscadorCliente,email,telefono1,telefono2,telefono3);
     };
 
-    const onSubmit = () => {
-        // Consumir api
-        console.log(
-            contactoId,
-            clienteId,
-            buscadorCliente,
-            nombres,
-            email,
-            telefono1,
-            telefono2,
-            telefono3
-        );
+    const clearForm = () => {
+        setContactoId(0);
+        setClienteId(0);
+        setBuscadorCliente('');
+        setNombres('');
+        setEmail('');
+        setTelefono1('');
+        setTelefono2('');
+        setTelefono3('');
     };
 
-    const deleteRow = (contactId) => {
-        // Consumir api
-        const index = tableData.findIndex(row => row.contactoId === contactId)
-        console.log(tableData, index);
-        const tempDat = [...tableData].splice(index, 1);
-        setTableData(tempDat);
-    } 
+    const getData = async () => {
+        try {
+            const respuesta = await axios({
+                method: 'POST',
+                url: net_base_url+'/CXC_ClientesRef.asmx/ClientesREFMostrar',
+                validateStatus: status => true
+            })
 
-    const searchCliente = async () => {
-        console.log(buscadorCliente);
-
-        const respuesta = await axios({
-            url: 'https://jsonplaceholder.typicode.com/todos/1',
-            data: {}
-        })
-
-        if (respuesta.status >= 200 && respuesta.status < 300) {
-            setClienteId(respuesta.data.userId)
-            console.log(clienteId)
-        } else {
-            setMensajeBusqueda('Error: ' + respuesta.status);
+            const data = new XMLParser().parseFromString(respuesta.data)
+            // console.log(data.children[1].children[0]);
+            if (respuesta.status >= 200 && respuesta.status < 300) {
+                const tempData = [];
+                if(data.children[1].children.length < 1) {
+                    setTableData([]);
+                    return;
+                };
+                for (const item of data.children[1].children[0].children) {
+                    tempData.push({
+                        contactoId: item.children.find(obj => obj.name === 'CRF_CLIENTE_REFERENCIA') ? item.children.find(obj => obj.name === 'CRF_CLIENTE_REFERENCIA').value : null,
+                        clienteId: item.children.find(obj => obj.name === 'CRF_CLIENTE') ? item.children.find(obj => obj.name === 'CRF_CLIENTE').value : null,
+                        nombreCliente: item.children.find(obj => obj.name === 'CLI_RAZON_SOCIAL') ? item.children.find(obj => obj.name === 'CLI_RAZON_SOCIAL').value : null,
+                        nombres: item.children.find(obj => obj.name === 'CRF_NOMBRE_REF') ? item.children.find(obj => obj.name === 'CRF_NOMBRE_REF').value : null,
+                        email: item.children.find(obj => obj.name === 'CRF_CORREO_ELECTRONICO') ? item.children.find(obj => obj.name === 'CRF_CORREO_ELECTRONICO').value : null,
+                        telefono1: item.children.find(obj => obj.name === 'CRF_TELEFONO1') ? item.children.find(obj => obj.name === 'CRF_TELEFONO1').value : null,
+                        telefono2: item.children.find(obj => obj.name === 'CRF_TELEFONO2') ? item.children.find(obj => obj.name === 'CRF_TELEFONO2').value : null,
+                        telefono3: item.children.find(obj => obj.name === 'CRF_TELEFONO3') ? item.children.find(obj => obj.name === 'CRF_TELEFONO3').value : null,
+                    })
+                }
+                setTableData(tempData);
+            } else {
+                console.log(respuesta.data);
+            }
+        } catch (error) {
+            console.log('Error: ' + error.message)
         }
     }
+
+    const onSubmit = async () => {
+        let url ;
+        let method ;
+        let data ;
+
+        if (contactoId > 0) {
+            url = net_base_url+'CXC_ClientesRef.asmx/ClientesREFactualizar'
+            method = 'POST';
+            data = querystring.stringify({
+                P_REFERENCIA_ID: contactoId,
+                P_CLIENTE_ID: clienteId,
+                CRF_NOMBRE_REF: nombres,
+                CRF_TELEFONO1: telefono1,
+                CRF_TELEFONO2: telefono2,
+                CRF_TELEFONO3: telefono3,
+                CRF_CORREO_ELECTRONICO: email,
+            });
+        } else {
+            url = net_base_url+'/CXC_ClientesRef.asmx/ClientesREFguardar';
+            method = 'POST';
+            data = querystring.stringify({
+                P_CLIENTE_ID: clienteId,
+                CRF_NOMBRE_REF: nombres,
+                CRF_TELEFONO1: telefono1,
+                CRF_TELEFONO2: telefono2,
+                CRF_TELEFONO3: telefono3,
+                CRF_CORREO_ELECTRONICO: email,
+            });
+        }
+        try {
+            const respuesta = await axios({
+                method: method,
+                url: url,
+                data: data, 
+                headers: { 
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                validateStatus: status => true
+            })
+
+            // const data = new XMLParser().parseFromString(respuesta.data)
+            // console.log(data.children[1].children[0]);
+            if (respuesta.status >= 200 && respuesta.status < 300) {
+                getData();
+                clearForm();
+            } else {
+                console.log(respuesta.data);
+            }
+        } catch (error) {
+            console.log('Error: ' + error.message)
+        }
+    };
+
+    const deleteRow = async (customerContactId) => {
+        try {
+            const respuesta = await axios({
+                method: 'POST',
+                url: net_base_url+'/CXC_ClientesRef.asmx/ClientesREFEliminar',
+                data: querystring.stringify({
+                    P_REFERENCIA_ID: customerContactId
+                }),
+                validateStatus: status => true
+            })
+
+            // const data = new XMLParser().parseFromString(respuesta.data)
+            // console.log(data.children[1].children[0]);
+            if (respuesta.status >= 200 && respuesta.status < 300) {
+               getData();
+            } else {
+                console.log(respuesta.data);
+            }
+        } catch (error) {
+            console.log('Error: ' + error.message)
+        }
+    }
+
+    const searchCliente = async () => {
+        try {
+            const respuesta = await axios({
+                method: 'POST',
+                url: net_base_url+'/Proyecto-Analisis.asmx/ClienteBuscar',
+                data: querystring.stringify({
+                    cli_cliente: buscadorCliente,
+                }),
+                validateStatus: status => true
+            })
+
+            const data = new XMLParser().parseFromString(respuesta.data)
+            if (respuesta.status >= 200 && respuesta.status < 300) {
+                const tempData = [];
+                if (data.children[1].children[0].children[0]) {
+                    setClienteId(data.children[1].children[0].children[0].children[0].value);
+                    setMensajeBusqueda('Cliente encontrado');
+                } else {
+                    setMensajeBusqueda('Cliente no encontrado');
+                }
+            } else {
+                setMensajeBusqueda('Cliente no encontrado');
+                console.log(respuesta.data);
+            }
+        } catch (error) {
+            setMensajeBusqueda('Cliente no encontrado');
+            console.log('Error: ' + error.message)
+        }
+    }
+
+    useEffect(() => {
+        getData();
+        }, []
+    );
 
     return <>
         <div id="formSegment">
