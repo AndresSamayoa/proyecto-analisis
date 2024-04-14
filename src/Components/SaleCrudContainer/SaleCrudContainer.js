@@ -87,17 +87,21 @@ function SaleCrudContainer () {
             // console.log(data.children[1].children[0]);
             if (respuesta.status >= 200 && respuesta.status < 300) {
                 const tempData = [];
+                if(data.children[1].children.length < 1) {
+                    setTableData([]);
+                    return;
+                };
                 for (const item of data.children[1].children[0].children) {
                     tempData.push({
-                        ventaId: item.children.find(obj => obj.name === 'VEN_VENTA').value,//[0].value,
-                        clienteId: item.children.find(obj => obj.name === 'VEN_CLIENTE').value,
-                        nombreCliente: item.children.find(obj => obj.name === 'CLI_RAZON_SOCIAL').value,
-                        empleadoId: item.children.find(obj => obj.name === 'VEN_EMPLEADO').value,
-                        nombreEmpleado: item.children.find(obj => obj.name === 'EMP_NOMBRES').value,
-                        condicionPago: item.children.find(obj => obj.name === 'VEN_CONDICION_PAGO').value,
-                        numeroAutorizacion: item.children.find(obj => obj.name === 'VEN_NO_AUTORIZACION').value,
-                        valorTotal: item.children.find(obj => obj.name === 'VEN_TOTAL').value,
-                        cerrado: item.children.find(obj => obj.name === 'VEN_CERRADO').value,
+                        ventaId: item.children.find(obj => obj.name === 'VEN_VENTA') ? item.children.find(obj => obj.name === 'VEN_VENTA').value : null,
+                        clienteId: item.children.find(obj => obj.name === 'VEN_CLIENTE') ? item.children.find(obj => obj.name === 'VEN_CLIENTE').value : null,
+                        nombreCliente: item.children.find(obj => obj.name === 'CLI_RAZON_SOCIAL') ? item.children.find(obj => obj.name === 'CLI_RAZON_SOCIAL').value : null,
+                        empleadoId: item.children.find(obj => obj.name === 'VEN_EMPLEADO') ? item.children.find(obj => obj.name === 'VEN_EMPLEADO').value : null,
+                        nombreEmpleado: item.children.find(obj => obj.name === 'EMP_NOMBRES') ? item.children.find(obj => obj.name === 'EMP_NOMBRES').value : null,
+                        condicionPago: item.children.find(obj => obj.name === 'VEN_CONDICION_PAGO') ? item.children.find(obj => obj.name === 'VEN_CONDICION_PAGO').value : null,
+                        numeroAutorizacion: item.children.find(obj => obj.name === 'VEN_NO_AUTORIZACION') ? item.children.find(obj => obj.name === 'VEN_NO_AUTORIZACION').value : null,
+                        valorTotal: item.children.find(obj => obj.name === 'VEN_TOTAL') ? item.children.find(obj => obj.name === 'VEN_TOTAL').value : null,
+                        cerrado: item.children.find(obj => obj.name === 'VEN_CERRADO') ? item.children.find(obj => obj.name === 'VEN_CERRADO').value : null,
                     })
                 }
                 setTableData(tempData);

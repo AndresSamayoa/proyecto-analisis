@@ -75,15 +75,19 @@ const CustomerCrudContainer = () => {
             // console.log(data.children[1].children[0]);
             if (respuesta.status >= 200 && respuesta.status < 300) {
                 const tempData = [];
+                if(data.children[1].children.length < 1) {
+                    setTableData([]);
+                    return;
+                };
                 for (const item of data.children[1].children[0].children) {
                     tempData.push({
-                        clienteId: item.children[0].value,
-                        razonSocial: item.children[1].value,
-                        nit: item.children[6].value,
-                        correoElectronico: item.children[4].value,
-                        telefono: item.children[3].value,
-                        direccionFiscal: item.children[2].value,
-                        tipoCliente: item.children[5].value
+                        clienteId: item.children.find(obj => obj.name === 'CLI_CLIENTE') ? item.children.find(obj => obj.name === 'CLI_CLIENTE').value : null,
+                        razonSocial: item.children.find(obj => obj.name === 'CLI_RAZON_SOCIAL') ? item.children.find(obj => obj.name === 'CLI_RAZON_SOCIAL').value : null,
+                        nit: item.children.find(obj => obj.name === 'CLI_NIT') ? item.children.find(obj => obj.name === 'CLI_NIT').value : null,
+                        correoElectronico: item.children.find(obj => obj.name === 'CLI_CORREO_ELECTRONICO') ? item.children.find(obj => obj.name === 'CLI_CORREO_ELECTRONICO').value : null,
+                        telefono: item.children.find(obj => obj.name === 'CLI_TELEFONO') ? item.children.find(obj => obj.name === 'CLI_TELEFONO').value : null,
+                        direccionFiscal: item.children.find(obj => obj.name === 'CLI_DIRECCION') ? item.children.find(obj => obj.name === 'CLI_DIRECCION').value : null,
+                        tipoCliente: item.children.find(obj => obj.name === 'CLI_TIPO_CLIENTE') ? item.children.find(obj => obj.name === 'CLI_TIPO_CLIENTE').value : null
                     })
                 }
                 setTableData(tempData);

@@ -80,13 +80,17 @@ function CreditCrudContainer () {
             // console.log(data.children[1].children[0]);
             if (respuesta.status >= 200 && respuesta.status < 300) {
                 const tempData = [];
+                if(data.children[1].children.length < 1) {
+                    setTableData([]);
+                    return;
+                };
                 for (const item of data.children[1].children[0].children) {
                     tempData.push({
-                        creditoId: item.children[0].value,
-                        clienteId: item.children[1].value,
-                        nombreCliente: item.children[2].value,
-                        credito: item.children[3].value,
-                        plazo: item.children[4].value,
+                        creditoId: item.children.find(obj => obj.name === 'CRE_CREDITO') ? item.children.find(obj => obj.name === 'CRE_CREDITO').value : null,
+                        clienteId: item.children.find(obj => obj.name === 'CLI_CLIENTE') ? item.children.find(obj => obj.name === 'CLI_CLIENTE').value : null,
+                        nombreCliente: item.children.find(obj => obj.name === 'CLI_RAZON_SOCIAL') ? item.children.find(obj => obj.name === 'CLI_RAZON_SOCIAL').value : null,
+                        credito: item.children.find(obj => obj.name === 'CRE_CREDITO_DISPONIBLE') ? item.children.find(obj => obj.name === 'CRE_CREDITO_DISPONIBLE').value : null,
+                        plazo: item.children.find(obj => obj.name === 'CRE_PLAZO') ? item.children.find(obj => obj.name === 'CRE_PLAZO').value : null,
                     })
                 }
                 setTableData(tempData);

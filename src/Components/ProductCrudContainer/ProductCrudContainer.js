@@ -75,12 +75,16 @@ function ProductCrudContainer () {
             // console.log(data.children[1].children[0]);
             if (respuesta.status >= 200 && respuesta.status < 300) {
                 const tempData = [];
+                if(data.children[1].children.length < 1) {
+                    setTableData([]);
+                    return;
+                };
                 for (const item of data.children[1].children[0].children) {
                     tempData.push({
-                        productoId: item.children[0].value,
-                        descripcion: item.children[1].value,
-                        precio: item.children[2].value,
-                        cantidad: item.children[3].value,
+                        productoId: item.children.find(obj => obj.name === 'PRO_PRODUCTO') ? item.children.find(obj => obj.name === 'PRO_PRODUCTO').value : null,
+                        descripcion: item.children.find(obj => obj.name === 'PRO_DESCRIPCION') ? item.children.find(obj => obj.name === 'PRO_DESCRIPCION').value : null,
+                        precio: item.children.find(obj => obj.name === 'PRO_PRECIO') ? item.children.find(obj => obj.name === 'PRO_PRECIO').value : null,
+                        cantidad: item.children.find(obj => obj.name === 'PRO_CANTIDAD') ? item.children.find(obj => obj.name === 'PRO_CANTIDAD').value : null,
                     })
                 }
                 setTableData(tempData);

@@ -102,15 +102,18 @@ function EmployeeCrudContainer () {
             const data = new XMLParser().parseFromString(respuesta.data)
             // console.log(data.children[1].children[0]);
             if (respuesta.status >= 200 && respuesta.status < 300) {
-                const tempData = [];
+                const tempData = [];if(data.children[1].children.length < 1) {
+                    setTableData([]);
+                    return;
+                };
                 for (const item of data.children[1].children[0].children) {
                     tempData.push({
-                        empleadoId: item.children[0].value,
-                        nombre: item.children[1].value,
-                        apellido: item.children[2].value,
-                        correoElectronico: item.children[5].value,
-                        telefono: item.children[3].value,
-                        direccion: item.children[4].value,
+                        empleadoId: item.children.find(obj => obj.name === 'EMP_EMPLEADO') ? item.children.find(obj => obj.name === 'EMP_EMPLEADO').value : null,
+                        nombre: item.children.find(obj => obj.name === 'EMP_NOMBRE') ? item.children.find(obj => obj.name === 'EMP_NOMBRE').value : null,
+                        apellido: item.children.find(obj => obj.name === 'EMP_APELLIDO') ? item.children.find(obj => obj.name === 'EMP_APELLIDO').value : null,
+                        correoElectronico: item.children.find(obj => obj.name === 'EMP_CORREO_ELECTRONICO') ? item.children.find(obj => obj.name === 'EMP_CORREO_ELECTRONICO').value : null,
+                        telefono: item.children.find(obj => obj.name === 'EMP_TELEFONO') ? item.children.find(obj => obj.name === 'EMP_TELEFONO').value : null,
+                        direccion: item.children.find(obj => obj.name === 'EMP_DIRECCION') ? item.children.find(obj => obj.name === 'EMP_DIRECCION').value : null,
                     })
                 }
                 setTableData(tempData);
