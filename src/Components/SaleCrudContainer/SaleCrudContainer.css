@@ -10,3 +10,10 @@
 .tableSegment{
     width: 50%;
 }
+
+.extraCruds{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 8px;
+}

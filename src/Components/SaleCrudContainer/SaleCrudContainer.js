@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 
 import SaleForm from '../SaleForm/SaleForm'
 import SaleDetailCrudContainer from '../SaleDetailCrudContainer/SaleDetailCrudContainer'
+import PaymentCrudContainer from '../PaymentCrudContainer/PaymentCrudContainer'
 
 const net_base_url = process.env.REACT_APP_DOT_NET_API_BASE;
 
@@ -121,7 +122,7 @@ function SaleCrudContainer () {
         setCerrado(row.cerrado);
     };
 
-    const clearForm = async () => {
+    const clearForm = () => {
         setVentaId(0);
         setClienteId(0);
         setBuscadorCliente('');
@@ -325,10 +326,21 @@ function SaleCrudContainer () {
             </div>
         </div>
         
-        {ventaId > 0 && 
-            <div className='controlSegment'>
-                <SaleDetailCrudContainer ventaId={ventaId}/>
-            </div>
+        {ventaId > 0 &&
+            <> 
+                <div className='extraCruds'>
+                    <h3>Detalles</h3>
+                    <div className='controlSegment'>
+                        <SaleDetailCrudContainer ventaId={ventaId}/>
+                    </div>
+                </div>
+                <div className='extraCruds'>
+                    <h3>Abonos</h3>
+                    <div className='controlSegment'>
+                        <PaymentCrudContainer ventaId={ventaId}/>
+                    </div>
+                </div>
+            </>
         }
     </>
 };

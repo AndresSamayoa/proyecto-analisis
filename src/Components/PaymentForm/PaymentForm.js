@@ -1,7 +1,5 @@
 import './PaymentForm.css';
 
-import SearchInput from '../SearchInput/SearchInput';
-
 function PaymentForm (props) {
 
     const changeValor = (e) => {
@@ -17,12 +15,7 @@ function PaymentForm (props) {
     };
 
     const cancelForm = () => {
-        props.setAbonoId(0)
-        props.setValorBuscadorVenta('');
-        props.setVentaId(0)
-        props.setTipoPago('');
-        props.setValor(0);
-        props.setNumeroAutorizacion('');
+        props.clearForm();
     }
 
     const submitForm = (e) => {
@@ -32,13 +25,6 @@ function PaymentForm (props) {
 
     return <div className="formContainer">
         <form onSubmit={submitForm} >
-        <SearchInput
-            label="Venta (buscar por autorizacion o codigo)"
-            value={props.valorBuscadorVenta}
-            setValue={props.setValorBuscadorVenta}
-            searchValueFunction={props.searchVenta}
-            messageSearch={props.mensajeBusqueda}
-        />
         <div className="inputContainer">
             <label>Numero de autorizacion</label>
             <input type="Text" id="txtNumeroAutorizacion" value={props.numeroAutorizacion} onChange={changeNumeroAutorizacion}/>

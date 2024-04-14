@@ -1,8 +1,0 @@
-.paymentPage{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: flex-start;
-    width: 100%;
-    padding-top: 1%;
-}

@@ -2,6 +2,7 @@ import './PaymentCrudContainer.css'
 
 import DataTable from 'react-data-table-component';
 import XMLParser from 'react-xml-parser';
+import querystring from 'querystring';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -9,7 +10,7 @@ import PaymentForm from '../PaymentForm/PaymentForm';
 
 const net_base_url = process.env.REACT_APP_DOT_NET_API_BASE;
 
-function PaymentCrudContainer () {
+function PaymentCrudContainer (props) {
     
     const columns = [
         {
@@ -45,40 +46,21 @@ function PaymentCrudContainer () {
             selector: row => row.numeroAutorizacion,
         }
     ];
-    
-    const data = [
-        {
-            abonoId: 1,
-            ventaId: 1,
-            numeroAutorizacionVenta: '1234567890',
-            valor: 10,
-            tipoPago: 'Transferencia',
-            numeroAutorizacion: '46579',
-        },
-        {
-            abonoId: 2,
-            ventaId: 3,
-            numeroAutorizacionVenta: '6153415340',
-            valor: 10,
-            tipoPago: 'Cheque',
-            numeroAutorizacion: '02245A',
-        },
-    ];
 
     const [abonoId, setAbonoId] = useState(0);
-    const [ventaId, setVentaId] = useState(0);
-    const [buscadorVenta, setBuscadorVenta] = useState('');
     const [numeroAutorizacion, setNumeroAutorizacion] = useState(0);
     const [valor, setValor] = useState(0);
     const [tipoPago, setTipoPago] = useState(0);
-    const [mensajeBusqueda, setMensajeBusqueda] = useState('');
     const [tableData, setTableData] = useState([]);
 
     const getData = async () => {
         try {
             const respuesta = await axios({
                 method: 'POST',
-                url: net_base_url+'/Proyecto-Analisis.asmx/AbonosMostrar',
+                url: net_base_url+'/CXC_Abono.asmx/AbonoMostrar',
+                data: querystring.stringify({
+                    id_abono: props.ventaId
+                }),
                 validateStatus: status => true
             })
 
@@ -86,14 +68,18 @@ function PaymentCrudContainer () {
             // console.log(data.children[1].children[0]);
             if (respuesta.status >= 200 && respuesta.status < 300) {
                 const tempData = [];
+                if(data.children[1].children.length < 1) {
+                    setTableData([]);
+                    return;
+                };
                 for (const item of data.children[1].children[0].children) {
                     tempData.push({
-                        abonoId: item.children[0].value,
-                        ventaId: item.children[1].value,
-                        numeroAutorizacionVenta: item.children[2].value,
-                        valor: item.children[5].value,
-                        tipoPago: item.children[3].value,
-                        numeroAutorizacion: item.children[4].value,
+                        abonoId: item.children.find(obj => obj.name === 'ABO_ABONO') ? item.children.find(obj => obj.name === 'ABO_ABONO').value : null,
+                        ventaId: props.ventaId,
+                        numeroAutorizacionVenta: item.children.find(obj => obj.name === 'VEN_NO_AUTORIZACION') ? item.children.find(obj => obj.name === 'VEN_NO_AUTORIZACION').value : null,
+                        valor: item.children.find(obj => obj.name === 'ABO_VALOR') ? item.children.find(obj => obj.name === 'ABO_VALOR').value : null,
+                        tipoPago: item.children.find(obj => obj.name === 'ABO_TIPO_PAGO') ? item.children.find(obj => obj.name === 'ABO_TIPO_PAGO').value : null,
+                        numeroAutorizacion: item.children.find(obj => obj.name === 'ABO_NO_AUTORIZADO') ? item.children.find(obj => obj.name === 'ABO_NO_AUTORIZADO').value : null,
                     })
                 }
                 setTableData(tempData);
@@ -107,12 +93,16 @@ function PaymentCrudContainer () {
 
     const updateForm = (row) => {
         setAbonoId(row.abonoId);
-        setVentaId(row.ventaId);
-        setBuscadorVenta(row.numeroAutorizacionVenta);
         setValor(row.valor);
         setTipoPago(row.tipoPago);
         setNumeroAutorizacion(row.numeroAutorizacion);
-        console.log(abonoId,ventaId,buscadorVenta,numeroAutorizacion,valor,tipoPago);
+    };
+
+    const clearForm = () => {
+        setAbonoId(0);
+        setValor(0);
+        setTipoPago('');
+        setNumeroAutorizacion('');
     };
 
     const onSubmit = async () => {
@@ -121,23 +111,23 @@ function PaymentCrudContainer () {
         let data ;
 
         if (abonoId > 0) {
-            url = net_base_url+'Proyecto-Analisis.asmx/AbonosActualizar'
+            url = net_base_url+'CXC_Abono.asmx/Abonoactualizar'
             method = 'POST';
             data = querystring.stringify({
-                abo_abono: abonoId,
-                abo_venta: ventaId,
-                abo_numero_autorizacion: numeroAutorizacion,
-                abo_valor: valor,
-                abo_tipo_pago: tipoPago,
+                P_ABONO_ID: abonoId,
+                P_NOVENTA_ID: props.ventaId,
+                P_NO_AUTORIZACION: numeroAutorizacion,
+                P_FLVALOR: valor,
+                P_TIPO_PAGO: tipoPago,
             });
         } else {
-            url = net_base_url+'/Proyecto-Analisis.asmx/Abonosguardar';
+            url = net_base_url+'/CXC_Abono.asmx/Abonoguardar';
             method = 'POST';
             data = querystring.stringify({
-                abo_venta: ventaId,
-                abo_numero_autorizacion: numeroAutorizacion,
-                abo_valor: valor,
-                abo_tipo_pago: tipoPago,
+                P_NOVENTA_ID: props.ventaId,
+                P_NO_AUTORIZACION: numeroAutorizacion,
+                P_FLVALOR: valor,
+                P_TIPO_PAGO: tipoPago,
             });
         }
         try {
@@ -166,12 +156,11 @@ function PaymentCrudContainer () {
 
     const deleteRow = async (paymentId) => {
         try {
-            console.log(employeeId)
             const respuesta = await axios({
                 method: 'POST',
-                url: net_base_url+'/Proyecto-Analisis.asmx/CreditosEliminar',
+                url: net_base_url+'/CXC_Abono.asmx/ClientesEliminar',
                 data: querystring.stringify({
-                    abo_abono: paymentId
+                    ID_ABONO: paymentId
                 }),
                 validateStatus: status => true
             })
@@ -188,22 +177,6 @@ function PaymentCrudContainer () {
         }
     } 
 
-    const searchVenta = async () => {
-        console.log(buscadorVenta);
-
-        const respuesta = await axios({
-            url: 'https://jsonplaceholder.typicode.com/todos/1',
-            data: {}
-        })
-
-        if (respuesta.status >= 200 && respuesta.status < 300) {
-            setVentaId(respuesta.data.userId)
-            console.log(ventaId)
-        } else {
-            setMensajeBusqueda('Error: ' + respuesta.status);
-        }
-    }
-
     useEffect(() => {
         getData();
         }, []
@@ -213,20 +186,15 @@ function PaymentCrudContainer () {
         <div id="formSegment">
             <PaymentForm 
                 onSubmit={onSubmit}
+                clearForm={clearForm}
                 setAbonoId={setAbonoId}
-                setVentaId={setVentaId}
-                setValorBuscadorVenta={setBuscadorVenta}
                 setValor={setValor}
                 setTipoPago={setTipoPago}
                 setNumeroAutorizacion={setNumeroAutorizacion}
-                searchVenta={searchVenta}
                 abonoId={abonoId}
-                ventaId={ventaId}
-                valorBuscadorVenta={buscadorVenta}
                 valor={valor}
                 tipoPago={tipoPago}
                 numeroAutorizacion={numeroAutorizacion}
-                mensajeBusqueda={mensajeBusqueda}
             />
         </div>
         <div className="tableSegment">
