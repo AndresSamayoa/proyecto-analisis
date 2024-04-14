@@ -114,7 +114,6 @@ function SaleCrudContainer () {
     }
 
     const updateForm = (row) => {
-        console.log(row);
         setVentaId(row.ventaId)
         setClienteId(row.clienteId);
         setBuscadorCliente(row.clienteId);

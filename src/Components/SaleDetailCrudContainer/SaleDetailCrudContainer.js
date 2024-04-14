@@ -220,7 +220,7 @@ function SaleDetailCrudContainer (props) {
 
     useEffect(() => {
         getData();
-        }, []
+        }, [props.ventaId]
     );
 
     return <>

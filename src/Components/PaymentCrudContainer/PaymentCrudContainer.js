@@ -179,7 +179,7 @@ function PaymentCrudContainer (props) {
 
     useEffect(() => {
         getData();
-        }, []
+        }, [props.ventaId]
     );
 
     return <>
