@@ -20,11 +20,7 @@ function SaleDetailForm (props) {
     }
 
     const changeDescuento = (e) =>{
-        props.setChangeDescuento(e.target.value);
-    }
-
-    const changeSubtotal = (e) =>{
-        props.setSubtotal(e.target.value);
+        props.setDescuento(e.target.value);
     }
 
     return <div className="formContainer">
@@ -43,10 +39,6 @@ function SaleDetailForm (props) {
             <div className="inputContainer">
                 <label>Descuento</label>
                 <input type="number" id="txtDescuento" value={props.descuento} onChange={changeDescuento}/>
-            </div>
-            <div className="inputContainer">
-                <label>Subtotal</label>
-                <input type="number" readOnly id="txtSubtotal" value={props.subtotal} onChange={changeSubtotal}/>
             </div>
             <div className="inputContainer">
                 <input type="submit" value={props.detalleVentaId > 0 ? "Actualizar" : "Crear"} />

@@ -59,10 +59,10 @@ function SaleDetailCrudContainer (props) {
         try {
             const respuesta = await axios({
                 method: 'POST',
-                url: net_base_url+'/Proyecto-Analisis.asmx/VENTASDetallesMostrarVenta',
-                data: {
-                    dev_venta: props.ventaId
-                },
+                url: net_base_url+'/CXC_DetalleVenta.asmx/DetalleVentaMostrar',
+                data: querystring.stringify({
+                    id_DetalleV: props.ventaId
+                }),
                 validateStatus: status => true
             })
 
@@ -70,15 +70,19 @@ function SaleDetailCrudContainer (props) {
             // console.log(data.children[1].children[0]);
             if (respuesta.status >= 200 && respuesta.status < 300) {
                 const tempData = [];
+                if(data.children[1].children.length < 1) {
+                    setTableData([]);
+                    return;
+                };
                 for (const item of data.children[1].children[0].children) {
                     tempData.push({
                         ventaId: props.ventaId,
-                        detalleVentaId: item.children[0].value,
-                        nombreProducto: item.children[1].value,
-                        idProducto: item.children[2].value,
-                        cantidad: item.children[3].value,
-                        descuento: item.children[4].value,
-                        valorSubtotal: item.children[5].value,
+                        detalleVentaId: item.children.find(obj => obj.name === 'DEV_DETALLE_VENTA') ? item.children.find(obj => obj.name === 'DEV_DETALLE_VENTA').value : null,
+                        nombreProducto: item.children.find(obj => obj.name === 'PRO_DESCRIPCION') ? item.children.find(obj => obj.name === 'PRO_DESCRIPCION').value : null,
+                        idProducto: item.children.find(obj => obj.name === 'DEV_PRODUCTO') ? item.children.find(obj => obj.name === 'DEV_PRODUCTO').value : null,
+                        cantidad: item.children.find(obj => obj.name === 'DEV_CANTIDAD') ? item.children.find(obj => obj.name === 'DEV_CANTIDAD').value : null,
+                        descuento: item.children.find(obj => obj.name === 'DEV_DESCUENTO') ? item.children.find(obj => obj.name === 'DEV_DESCUENTO').value : null,
+                        valorSubtotal: item.children.find(obj => obj.name === 'DEV_SUBTOTAL') ? item.children.find(obj => obj.name === 'DEV_SUBTOTAL').value : null,
                     })
                 }
                 setTableData(tempData);
@@ -91,12 +95,13 @@ function SaleDetailCrudContainer (props) {
     }
 
     const updateForm = (row) => {
+        console.log(row)
         setDetalleVentaId(row.detalleVentaId)
         setSubtotal(row.valorSubtotal)
-        setCantidad(row.clienteId);
-        setDescuento(row.nombreCliente);
-        setProductoId(row.productoId);
-        setBuscadorProducto(row.productoId);
+        setCantidad(row.cantidad);
+        setDescuento(row.descuento);
+        setProductoId(row.idProducto);
+        setBuscadorProducto(row.idProducto);
         setMensajeBuscadorProducto('');
     };
 
@@ -115,26 +120,24 @@ function SaleDetailCrudContainer (props) {
         let method ;
         let data ;
 
-        if (creditoId > 0) {
-            url = net_base_url+'Proyecto-Analisis.asmx/DetalleVentaActualizar'
+        if (detalleVentaId > 0) {
+            url = net_base_url+'/CXC_DetalleVenta.asmx/DetalleVentactualizar'
             method = 'POST';
             data = querystring.stringify({
-                dev_detalle_venta: detalleVentaId,
-                dev_producto: productoId,
-                dev_subtotal: subtotal,
-                dev_cantidad: cantidad,
-                dev_descuento: descuento,
-                dev_venta: props.ventaId,
+                DetalleVenta: detalleVentaId,
+                DEV_PRODUCTO: productoId,
+                DEV_CANTIDAD: cantidad,
+                DEV_DESCUENTO: descuento,
+                DEV_VENTA: props.ventaId,
             });
         } else {
-            url = net_base_url+'/Proyecto-Analisis.asmx/DetalleVentaGuardar';
+            url = net_base_url+'/CXC_DetalleVenta.asmx/DetalleVentaGuardar';
             method = 'POST';
             data = querystring.stringify({
-                dev_producto: productoId,
-                dev_subtotal: subtotal,
-                dev_cantidad: cantidad,
-                dev_descuento: descuento,
-                dev_venta: props.ventaId,
+                DEV_PRODUCTO: productoId,
+                DEV_CANTIDAD: cantidad,
+                DEV_DESCUENTO: descuento,
+                DEV_VENTA: props.ventaId,
             });
         }
 
@@ -167,9 +170,9 @@ function SaleDetailCrudContainer (props) {
         try {
             const respuesta = await axios({
                 method: 'POST',
-                url: net_base_url+'/Proyecto-Analisis.asmx/DetalleVentaEliminar',
+                url: net_base_url+'/CXC_DetalleVenta.asmx/DetalleVentaEliminar',
                 data: querystring.stringify({
-                    ven_venta: saleId
+                    p_detalle_venta: saleId
                 }),
                 validateStatus: status => true
             })
@@ -190,28 +193,27 @@ function SaleDetailCrudContainer (props) {
         try {
             const respuesta = await axios({
                 method: 'POST',
-                url: net_base_url+'/Proyecto-Analisis.asmx/ProductosBuscar',
+                url: net_base_url+'/Proyecto-Analisis.asmx/ProductoBuscar',
                 data: querystring.stringify({
-                    pro_producto: buscadorProducto,
+                    p_id: buscadorProducto,
                 }),
                 validateStatus: status => true
             })
 
             const data = new XMLParser().parseFromString(respuesta.data)
             if (respuesta.status >= 200 && respuesta.status < 300) {
-                const tempData = [];
                 if (data.children[1].children[0].children[0]) {
-                    setClienteId(data.children[1].children[0].children[0].children[0].value);
-                    setMensajeBuscadorCliente('Producto encontrado');
+                    setProductoId(data.children[1].children[0].children[0].children[0].value);
+                    setMensajeBuscadorProducto('Producto encontrado');
                 } else {
-                    setMensajeBuscadorCliente('Producto no encontrado');
+                    setMensajeBuscadorProducto('Producto no encontrado');
                 }
             } else {
-                setMensajeBuscadorCliente('Producto no encontrado');
+                setMensajeBuscadorProducto('Producto no encontrado');
                 console.log(respuesta.data);
             }
         } catch (error) {
-            setMensajeBuscadorCliente('Producto no encontrado');
+            setMensajeBuscadorProducto('Producto no encontrado');
             console.log('Error: ' + error.message)
         }
     }
@@ -232,6 +234,7 @@ function SaleDetailCrudContainer (props) {
                 cantidad={cantidad}
                 subtotal={subtotal}
                 descuento={descuento}
+                valorBuscadorProducto={buscadorProducto}
                 mensajeBusquedaProducto={mensajeProducto}
                 setDetalleVentaId={setDetalleVentaId}
                 setCantidad={setCantidad}
