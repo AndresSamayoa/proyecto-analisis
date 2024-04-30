@@ -16,10 +16,7 @@ function ProductForm (props) {
 
     const cancelForm = (e) => {
         e.preventDefault();
-        props.setDescripcion('');
-        props.setPrecio(0);
-        props.setCantidad(0);
-        props.setProductoId(0);
+        props.clearForm();
     }
 
     const submitForm = (e) => {
@@ -44,6 +41,9 @@ function ProductForm (props) {
         <div className="inputContainer">
             <input type="submit" value={props.productoId > 0 ? "Actualizar" : "Crear"} />
             <input type="submit" value="Cancelar" onClick={cancelForm}/>
+        </div>
+        <div className="submitMessage">
+            {props.mensajeIngreso}
         </div>
         </form>
     </div>

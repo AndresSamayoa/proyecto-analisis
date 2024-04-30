@@ -27,13 +27,7 @@ function ProductForm (props) {
     };*/
 
     const cancelForm = () => {
-        props.setEmpleadoId(0);
-        props.setNombre('');
-        props.setApellido('');
-        props.setCorreoElectronico('');
-        props.setTelefono('');
-        props.setDireccion('');
-        // props.setRol(0);
+        props.clearForm();
     }
 
     const submitForm = async (e) => {
@@ -75,6 +69,9 @@ function ProductForm (props) {
         <div className="inputContainer">
             <input type="submit" value={props.empleadoId > 0 ? "Actualizar" : "Crear"} />
             <input type="submit" value="Cancelar" onClick={cancelForm}/>
+        </div>
+        <div className="submitMessage">
+            {props.mensajeIngreso}
         </div>
         </form>
     </div>

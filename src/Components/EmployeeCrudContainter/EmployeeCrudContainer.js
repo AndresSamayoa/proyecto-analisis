@@ -53,25 +53,6 @@ function EmployeeCrudContainer () {
         //     selector: row => row.rolDescripcion,
         // }
     ];
-    
-    const data = [
-        {
-            empleadoId: 1,
-            nombre: 'Empleado',
-            apellido: 'No. 1',
-            correoElectronico: 'empleado@mail.com',
-            telefono: '12345678',
-            direccion: 'Ciudad',
-        },
-        {
-            empleadoId: 2,
-            nombre: 'Empleado',
-            apellido: 'No. 2',
-            correoElectronico: 'Supervisor@mail.com',
-            telefono: '87654321',
-            direccion: 'Ciudad',
-        },
-    ];
 
     const [empleadoId, setEmpleadoId] = useState(0);
     const [nombre, setNombre] = useState('');
@@ -79,6 +60,8 @@ function EmployeeCrudContainer () {
     const [correoElectronico, setCorreoElectronico] = useState('');
     const [telefono, setTelefono] = useState('');
     const [direccion, setDireccion] = useState('');
+    const [mensajeIngreso, setMensajeIngreso] = useState('');
+    const [mensajeTabla, setMensajeTabla] = useState('');
     const [tableData, setTableData] = useState([]);
 
     const clearForm = () => {
@@ -88,7 +71,7 @@ function EmployeeCrudContainer () {
         setCorreoElectronico('');
         setTelefono('');
         setDireccion('');
-        
+        setMensajeIngreso('');
     };
 
     const getData = async () => {
@@ -99,9 +82,8 @@ function EmployeeCrudContainer () {
                 validateStatus: status => true
             })
 
-            const data = new XMLParser().parseFromString(respuesta.data)
-            // console.log(data.children[1].children[0]);
             if (respuesta.status >= 200 && respuesta.status < 300) {
+                const data = new XMLParser().parseFromString(respuesta.data)
                 const tempData = [];if(data.children[1].children.length < 1) {
                     setTableData([]);
                     return;
@@ -118,10 +100,10 @@ function EmployeeCrudContainer () {
                 }
                 setTableData(tempData);
             } else {
-                console.log(respuesta.data);
+                setMensajeTabla('Error ' + respuesta.status + ': ' + respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeTabla('Error: ' + error.message);
         }
     }
 
@@ -178,11 +160,12 @@ function EmployeeCrudContainer () {
             if (respuesta.status >= 200 && respuesta.status < 300) {
                 getData();
                 clearForm();
+                setMensajeIngreso('Exito en la operacion');
             } else {
-                console.log(respuesta.data);
+                setMensajeIngreso(respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeIngreso('Error: ' + error.message);
         }
     };
 
@@ -198,15 +181,13 @@ function EmployeeCrudContainer () {
                 validateStatus: status => true
             })
 
-            // const data = new XMLParser().parseFromString(respuesta.data)
-            // console.log(data.children[1].children[0]);
             if (respuesta.status >= 200 && respuesta.status < 300) {
                getData();
             } else {
-                console.log(respuesta.data);
+                setMensajeTabla('Error ' + respuesta.status + ': ' + respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeTabla('Error: ' + error.message);
         }
     } 
 
@@ -216,7 +197,7 @@ function EmployeeCrudContainer () {
     );
 
     return <>
-        <div id="formSegment">
+        <div className="formSegment">
             <EmployeeForm 
                 onSubmit={onSubmit}
                 setEmpleadoId={setEmpleadoId}
@@ -225,15 +206,18 @@ function EmployeeCrudContainer () {
                 setCorreoElectronico={setCorreoElectronico}
                 setTelefono={setTelefono}
                 setDireccion={setDireccion}
+                clearForm={clearForm}
                 empleadoId={empleadoId}
                 nombre={nombre}
                 apellido={apellido}
                 correoElectronico={correoElectronico}
                 telefono={telefono}
                 direccion={direccion}
+                mensajeIngreso={mensajeIngreso}
             />
         </div>
         <div className="tableSegment">
+            <p className="tableMessage">{mensajeTabla}</p>
             <DataTable columns={columns} data={tableData}/>
         </div>
     </>

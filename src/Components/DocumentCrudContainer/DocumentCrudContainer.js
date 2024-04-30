@@ -87,6 +87,8 @@ const DocumentCrudContainer = () => {
     const [fechaEmision, setFechaEmision] = useState('');
     const [fechaAnulacion, setFechaAnulacion] = useState('');
     const [tipoDocumento, setTipoDocumento] = useState('Factura');
+    const [mensajeIngreso, setMensajeIngreso] = useState('');
+    const [mensajeTabla, setMensajeTabla] = useState('');
     const [tableData, setTableData] = useState([]);
 
     const getData = async () => {
@@ -97,9 +99,8 @@ const DocumentCrudContainer = () => {
                 validateStatus: status => true
             })
 
-            const data = new XMLParser().parseFromString(respuesta.data)
-            // console.log(data.children[1].children[0]);
             if (respuesta.status >= 200 && respuesta.status < 300) {
+                const data = new XMLParser().parseFromString(respuesta.data);
                 const tempData = [];
                 for (const item of data.children[1].children[0].children) {
                     tempData.push({
@@ -117,10 +118,10 @@ const DocumentCrudContainer = () => {
                 }
                 setTableData(tempData);
             } else {
-                console.log(respuesta.data);
+                setMensajeTabla('Error ' + respuesta.status + ': ' + respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeTabla('Error: ' + error.message);
         }
     }
 
@@ -190,11 +191,12 @@ const DocumentCrudContainer = () => {
             if (respuesta.status >= 200 && respuesta.status < 300) {
                 getData();
                 clearForm();
+                setMensajeIngreso('Exito en la operacion');
             } else {
-                console.log(respuesta.data);
+                setMensajeIngreso(respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeIngreso('Error: ' + error.message);
         }
     };
 
@@ -214,10 +216,10 @@ const DocumentCrudContainer = () => {
             if (respuesta.status >= 200 && respuesta.status < 300) {
                getData();
             } else {
-                console.log(respuesta.data);
+                setMensajeTabla('Error ' + respuesta.status + ': ' + respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeTabla('Error: ' + error.message);
         }
     };
 
@@ -237,10 +239,10 @@ const DocumentCrudContainer = () => {
             if (respuesta.status >= 200 && respuesta.status < 300) {
                getData();
             } else {
-                console.log(respuesta.data);
+                setMensajeTabla('Error ' + respuesta.status + ': ' + respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeTabla('Error: ' + error.message);
         }
     };
 
@@ -260,10 +262,10 @@ const DocumentCrudContainer = () => {
             if (respuesta.status >= 200 && respuesta.status < 300) {
                getData();
             } else {
-                console.log(respuesta.data);
+                setMensajeTabla('Error ' + respuesta.status + ': ' + respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeTabla('Error: ' + error.message);
         }
     };
 
@@ -281,6 +283,7 @@ const DocumentCrudContainer = () => {
         setFechaEmision('');
         setFechaAnulacion('');
         setTipoDocumento('Factura');
+        setMensajeIngreso('');
     };
 
     const buscarVenta = async () => {
@@ -347,7 +350,7 @@ const DocumentCrudContainer = () => {
       }, []);
 
     return <>
-        <div id="formSegment">
+        <div className="formSegment">
            <DocumentForm 
                 onSubmit={onSubmit}
                 clearForm={clearForm}
@@ -369,9 +372,11 @@ const DocumentCrudContainer = () => {
                 fechaEmision={fechaEmision}
                 fechaAnulacion={fechaAnulacion}
                 tipoDocumento={tipoDocumento}
+                mensajeIngreso={mensajeIngreso}
             />
         </div>
         <div className="tableSegment">
+            <p className="tableMessage">{mensajeTabla}</p>
             <DataTable columns={columns} data={tableData}/>
         </div>
     </>

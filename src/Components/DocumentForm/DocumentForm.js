@@ -73,6 +73,9 @@ function DocumentForm (props) {
             <input type="submit" value={props.creditoId > 0 ? "Actualizar" : "Crear"} />
             <input type="submit" value="Cancelar" onClick={cancelForm}/>
         </div>
+        <div className="submitMessage">
+            {props.mensajeIngreso}
+        </div>
         </form>
     </div>
 }

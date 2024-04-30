@@ -41,26 +41,13 @@ function ProductCrudContainer () {
             selector: row => row.precio,
         }
     ];
-    
-    const data = [
-        {
-            productoId: 1,
-            descripcion: 'TEST 1',
-            precio: 20.00,
-            cantidad: 5,
-        },
-        {
-            productoId: 2,
-            descripcion: 'TEST 2',
-            precio: 10.00,
-            cantidad: 3,
-        },
-    ];
 
     const [productoId, setProductoId] = useState(0);
     const [descripcion, setDescripcion] = useState('');
     const [precio, setPrecio] = useState(0);
     const [cantidad, setCantidad] = useState(0);
+    const [mensajeIngreso, setMensajeIngreso] = useState('');
+    const [mensajeTabla, setMensajeTabla] = useState('');
     const [tableData, setTableData] = useState([]);
 
     const getData = async () => {
@@ -71,9 +58,8 @@ function ProductCrudContainer () {
                 validateStatus: status => true
             })
 
-            const data = new XMLParser().parseFromString(respuesta.data)
-            // console.log(data.children[1].children[0]);
             if (respuesta.status >= 200 && respuesta.status < 300) {
+                const data = new XMLParser().parseFromString(respuesta.data)
                 const tempData = [];
                 if(data.children[1].children.length < 1) {
                     setTableData([]);
@@ -89,10 +75,10 @@ function ProductCrudContainer () {
                 }
                 setTableData(tempData);
             } else {
-                console.log(respuesta.data);
+                setMensajeTabla('Error ' + respuesta.status + ': ' + respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeTabla('Error: ' + error.message);
         }
     }
 
@@ -109,6 +95,7 @@ function ProductCrudContainer () {
         setDescripcion('');
         setPrecio('');
         setCantidad('');
+        setMensajeIngreso('');
     };
 
     const onSubmit = async () => {
@@ -152,11 +139,12 @@ function ProductCrudContainer () {
             if (respuesta.status >= 200 && respuesta.status < 300) {
                 getData();
                 clearForm();
+                setMensajeIngreso('Exito en la operacion');
             } else {
-                console.log(respuesta.data);
+                setMensajeIngreso(respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeIngreso('Error: ' + error.message);
         }
     };
 
@@ -176,10 +164,10 @@ function ProductCrudContainer () {
             if (respuesta.status >= 200 && respuesta.status < 300) {
                getData();
             } else {
-                console.log(respuesta.data);
+                setMensajeTabla('Error ' + respuesta.status + ': ' + respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeTabla('Error: ' + error.message);
         }
     }
 
@@ -189,20 +177,23 @@ function ProductCrudContainer () {
     );
 
     return <>
-        <div id="formSegment">
+        <div className="formSegment">
             <ProductForm 
                 onSubmit={onSubmit}
                 setProductoId={setProductoId}
                 setDescripcion={setDescripcion}
                 setPrecio={setPrecio}
                 setCantidad={setCantidad}
+                clearForm={clearForm}
                 productoId={productoId}
                 descripcion={descripcion}
                 precio={precio}
                 cantidad={cantidad}
+                mensajeIngreso={mensajeIngreso}
             />
         </div>
         <div className="tableSegment">
+            <p className="tableMessage">{mensajeTabla}</p>
             <DataTable columns={columns} data={tableData}/>
         </div>
     </>
