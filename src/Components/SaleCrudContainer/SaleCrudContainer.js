@@ -73,6 +73,8 @@ function SaleCrudContainer () {
     const [numeroAutorizacion, setNumeroAutorizacion] = useState('');
     const [total, setTotal] = useState(0);
     const [cerrado, setCerrado] = useState(false);
+    const [mensajeIngreso, setMensajeIngreso] = useState('');
+    const [mensajeTabla, setMensajeTabla] = useState('');
     const [tableData, setTableData] = useState([]);
 
     const getData = async () => {
@@ -83,9 +85,8 @@ function SaleCrudContainer () {
                 validateStatus: status => true
             })
 
-            const data = new XMLParser().parseFromString(respuesta.data)
-            // console.log(data.children[1].children[0]);
             if (respuesta.status >= 200 && respuesta.status < 300) {
+                const data = new XMLParser().parseFromString(respuesta.data)
                 const tempData = [];
                 if(data.children[1].children.length < 1) {
                     setTableData([]);
@@ -106,10 +107,10 @@ function SaleCrudContainer () {
                 }
                 setTableData(tempData);
             } else {
-                console.log(respuesta.data);
+                setMensajeTabla('Error ' + respuesta.status + ': ' + respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeTabla('Error: ' + error.message)
         }
     }
 
@@ -137,6 +138,7 @@ function SaleCrudContainer () {
         setNumeroAutorizacion('');
         setTotal(0);
         setCerrado(false);
+        setMensajeIngreso('');
     };
 
     const onSubmit = async () => {
@@ -182,11 +184,12 @@ function SaleCrudContainer () {
                 console.log(respuesta.data);
                 getData();
                 clearForm();
+                setMensajeIngreso('Exito en la operacion');
             } else {
-                console.log(respuesta.data);
+                setMensajeIngreso(respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeIngreso('Error: ' + error.message);
         }
     };
 
@@ -206,10 +209,10 @@ function SaleCrudContainer () {
             if (respuesta.status >= 200 && respuesta.status < 300) {
                getData();
             } else {
-                console.log(respuesta.data);
+                setMensajeTabla('Error ' + respuesta.status + ': ' + respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeTabla('Error: ' + error.message);
         }
     }
 
@@ -229,10 +232,10 @@ function SaleCrudContainer () {
             if (respuesta.status >= 200 && respuesta.status < 300) {
                getData();
             } else {
-                console.log(respuesta.data);
+                setMensajeTabla('Error ' + respuesta.status + ': ' + respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeTabla('Error: ' + error.message);
         }
     }
 
@@ -322,9 +325,11 @@ function SaleCrudContainer () {
                     setCondicionPago={setCondicionPago}
                     setValorBuscadorEmpleado={setBuscadorEmpleado}
                     setValorBuscadorCliente={setBuscadorCliente}
+                    mensajeIngreso={mensajeIngreso}
                 />
             </div>
             <div className="tableSegment">
+                <p className="tableMessage">{mensajeTabla}</p>
                 <DataTable columns={columns} data={tableData}/>
             </div>
         </div>

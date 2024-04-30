@@ -53,6 +53,8 @@ function SaleDetailCrudContainer (props) {
     const [subtotal, setSubtotal] = useState(0);
     const [cantidad, setCantidad] = useState(0);
     const [descuento, setDescuento] = useState(0);
+    const [mensajeIngreso, setMensajeIngreso] = useState('');
+    const [mensajeTabla, setMensajeTabla] = useState('');
     const [tableData, setTableData] = useState([]);
 
     const getData = async () => {
@@ -66,9 +68,8 @@ function SaleDetailCrudContainer (props) {
                 validateStatus: status => true
             })
 
-            const data = new XMLParser().parseFromString(respuesta.data)
-            // console.log(data.children[1].children[0]);
             if (respuesta.status >= 200 && respuesta.status < 300) {
+                const data = new XMLParser().parseFromString(respuesta.data)
                 const tempData = [];
                 if(data.children[1].children.length < 1) {
                     setTableData([]);
@@ -87,10 +88,10 @@ function SaleDetailCrudContainer (props) {
                 }
                 setTableData(tempData);
             } else {
-                console.log(respuesta.data);
+                setMensajeTabla('Error ' + respuesta.status + ': ' + respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeTabla('Error: ' + error.message);
         }
     }
 
@@ -113,6 +114,7 @@ function SaleDetailCrudContainer (props) {
         setProductoId(0);
         setBuscadorProducto(0);
         setMensajeBuscadorProducto('');
+        setMensajeIngreso('');
     };
 
     const onSubmit = async () => {
@@ -158,11 +160,12 @@ function SaleDetailCrudContainer (props) {
                 console.log(respuesta.data);
                 getData();
                 clearForm();
+                setMensajeIngreso('Exito en la operacion');
             } else {
-                console.log(respuesta.data);
+                setMensajeIngreso(respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeIngreso('Error: ' + error.message);
         }
     };
 
@@ -182,10 +185,10 @@ function SaleDetailCrudContainer (props) {
             if (respuesta.status >= 200 && respuesta.status < 300) {
                getData();
             } else {
-                console.log(respuesta.data);
+                setMensajeTabla('Error ' + respuesta.status + ': ' + respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeTabla('Error: ' + error.message);
         }
     } 
 
@@ -224,7 +227,7 @@ function SaleDetailCrudContainer (props) {
     );
 
     return <>
-        <div>
+        <div className="formSegment">
             <SaleDetailForm 
                 onSubmit={onSubmit}
                 cancelForm={clearForm}
@@ -241,9 +244,11 @@ function SaleDetailCrudContainer (props) {
                 setSubtotal={setSubtotal}
                 setDescuento={setDescuento}
                 setValorBuscadorProducto={setBuscadorProducto}
+                mensajeIngreso={mensajeIngreso}
             />
         </div>
         <div className="tableSegment">
+            <p className="tableMessage">{mensajeTabla}</p>
             <DataTable columns={columns} data={tableData}/>
         </div>
     </>
