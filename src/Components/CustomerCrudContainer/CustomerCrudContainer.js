@@ -61,6 +61,8 @@ const CustomerCrudContainer = () => {
     const [tipoCliente, setTipoCliente] = useState('persona');
     const [correoElectronico, setCorreoElectronico] = useState('');
     const [telefono, setTelefono] = useState('');
+    const [mensajeIngreso, setMensajeIngreso] = useState('');
+    const [mensajeTabla, setMensajeTabla] = useState('');
     const [tableData, setTableData] = useState([]);
 
     const getData = async () => {
@@ -71,9 +73,8 @@ const CustomerCrudContainer = () => {
                 validateStatus: status => true
             })
 
-            const data = new XMLParser().parseFromString(respuesta.data)
-            // console.log(data.children[1].children[0]);
             if (respuesta.status >= 200 && respuesta.status < 300) {
+                const data = new XMLParser().parseFromString(respuesta.data)
                 const tempData = [];
                 if(data.children[1].children.length < 1) {
                     setTableData([]);
@@ -92,10 +93,10 @@ const CustomerCrudContainer = () => {
                 }
                 setTableData(tempData);
             } else {
-                console.log(respuesta.data);
+                setMensajeTabla('Error ' + respuesta.status + ': ' + respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeTabla('Error: ' + error.message)
         }
     }
 
@@ -159,11 +160,12 @@ const CustomerCrudContainer = () => {
             if (respuesta.status >= 200 && respuesta.status < 300) {
                 getData();
                 clearForm();
+                setMensajeIngreso('Exito en la operacion');
             } else {
-                console.log(respuesta.data);
+                setMensajeIngreso(respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeIngreso('Error: ' + error.message)
         }
     };
 
@@ -183,10 +185,10 @@ const CustomerCrudContainer = () => {
             if (respuesta.status >= 200 && respuesta.status < 300) {
                getData();
             } else {
-                console.log(respuesta.data);
+                setMensajeTabla('Error ' + respuesta.status + ': ' + respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeTabla('Error: ' + error.message)
         }
     };
 
@@ -198,6 +200,7 @@ const CustomerCrudContainer = () => {
         setTipoCliente('persona');
         setCorreoElectronico('');
         setTelefono('');
+        setMensajeIngreso();
     };
 
     useEffect(() => {
@@ -205,7 +208,7 @@ const CustomerCrudContainer = () => {
       }, []);
 
     return <>
-        <div id="formSegment">
+        <div className="formSegment">
            <CustomerForm 
                 onSubmit={onSubmit}
                 setClienteId={setClienteId}
@@ -222,9 +225,11 @@ const CustomerCrudContainer = () => {
                 tipoCliente={tipoCliente}
                 correoElectronico={correoElectronico}
                 telefono={telefono}
+                mensajeIngreso={mensajeIngreso}
             />
         </div>
         <div className="tableSegment">
+            <p className="tableMessage">{mensajeTabla}</p>
             <DataTable columns={columns} data={tableData}/>
         </div>
     </>
