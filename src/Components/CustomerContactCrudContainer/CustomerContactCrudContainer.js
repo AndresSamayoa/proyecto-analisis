@@ -54,29 +54,6 @@ function CustomerContactCrudContainer () {
             selector: row => row.telefono3,
         }
     ];
-    
-    const data = [
-        {
-            contactoId: 1,
-            clienteId: 1,
-            nombreCliente: 'TEST 1',
-            nombres: 'Contacto 1',
-            email: 'mail1@mail.com',
-            telefono1: '12345678',
-            telefono2: '12345678',
-            telefono3: '12345678',
-        },
-        {
-            contactoId: 2,
-            clienteId: 3,
-            nombreCliente: 'TEST 1',
-            nombres: 'Contacto 2',
-            email: 'mail1@mail.com',
-            telefono1: '12345678',
-            telefono2: '12345678',
-            telefono3: '12345678',
-        },
-    ];
 
     const [contactoId, setContactoId] = useState(0);
     const [clienteId, setClienteId] = useState(0);
@@ -87,6 +64,8 @@ function CustomerContactCrudContainer () {
     const [telefono2, setTelefono2] = useState('');
     const [telefono3, setTelefono3] = useState('');
     const [mensajeBusqueda, setMensajeBusqueda] = useState('');
+    const [mensajeIngreso, setMensajeIngreso] = useState('');
+    const [mensajeTabla, setMensajeTabla] = useState('');
     const [tableData, setTableData] = useState([]);
 
     const updateForm = (row) => {
@@ -110,6 +89,7 @@ function CustomerContactCrudContainer () {
         setTelefono1('');
         setTelefono2('');
         setTelefono3('');
+        setMensajeIngreso('');
     };
 
     const getData = async () => {
@@ -120,9 +100,8 @@ function CustomerContactCrudContainer () {
                 validateStatus: status => true
             })
 
-            const data = new XMLParser().parseFromString(respuesta.data)
-            // console.log(data.children[1].children[0]);
             if (respuesta.status >= 200 && respuesta.status < 300) {
+                const data = new XMLParser().parseFromString(respuesta.data);
                 const tempData = [];
                 if(data.children[1].children.length < 1) {
                     setTableData([]);
@@ -142,10 +121,10 @@ function CustomerContactCrudContainer () {
                 }
                 setTableData(tempData);
             } else {
-                console.log(respuesta.data);
+                setMensajeTabla('Error ' + respuesta.status + ': ' + respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeTabla('Error: ' + error.message);
         }
     }
 
@@ -194,11 +173,12 @@ function CustomerContactCrudContainer () {
             if (respuesta.status >= 200 && respuesta.status < 300) {
                 getData();
                 clearForm();
+                setMensajeIngreso('Exito en la operacion');
             } else {
-                console.log(respuesta.data);
+                setMensajeIngreso(respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeIngreso('Error: ' + error.message);
         }
     };
 
@@ -218,10 +198,10 @@ function CustomerContactCrudContainer () {
             if (respuesta.status >= 200 && respuesta.status < 300) {
                getData();
             } else {
-                console.log(respuesta.data);
+                setMensajeTabla('Error ' + respuesta.status + ': ' + respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeTabla('Error: ' + error.message);
         }
     }
 
@@ -261,7 +241,7 @@ function CustomerContactCrudContainer () {
     );
 
     return <>
-        <div id="formSegment">
+        <div className="formSegment">
             <CustomerContactForm 
                 onSubmit={onSubmit}
                 setContactoId={setContactoId}
@@ -273,6 +253,7 @@ function CustomerContactCrudContainer () {
                 setTelefono2={setTelefono2}
                 setTelefono3={setTelefono3}
                 searchCliente={searchCliente}
+                clearForm={clearForm}
                 contactoId={contactoId}
                 clienteId={clienteId}
                 valorBuscadorCliente={buscadorCliente}
@@ -282,9 +263,11 @@ function CustomerContactCrudContainer () {
                 telefono2={telefono2}
                 telefono3={telefono3}
                 mensajeBusqueda={mensajeBusqueda}
+                mensajeIngreso={mensajeIngreso}
             />
         </div>
         <div className="tableSegment">
+            <p className="tableMessage">{mensajeTabla}</p>
             <DataTable columns={columns} data={tableData}/>
         </div>
     </>

@@ -25,14 +25,7 @@ function CustomerContactForm (props) {
     };
 
     const cancelForm = () => {
-        props.setContactoId(0);
-        props.setValorBuscadorCliente('');
-        props.setClienteId(0);
-        props.setNombres('');
-        props.setEmail('');
-        props.setTelefono1('');
-        props.setTelefono2('');
-        props.setTelefono3('');
+        props.clearForm();
         
     }
 
@@ -74,6 +67,9 @@ function CustomerContactForm (props) {
             <input type="submit" value={props.contactoId > 0 ? "Actualizar" : "Crear"} />
             <input type="submit" value="Cancelar" onClick={cancelForm}/>
         </div>
+        <div className="submitMessage">
+                {props.mensajeIngreso}
+            </div>
         </form>
     </div>
 }

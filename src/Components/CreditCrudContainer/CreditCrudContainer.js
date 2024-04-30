@@ -42,23 +42,6 @@ function CreditCrudContainer () {
             selector: row => row.plazo,
         }
     ];
-    
-    const data = [
-        {
-            creditoId: 1,
-            clienteId: 1,
-            nombreCliente: 'TEST 1',
-            credito: 20.00,
-            plazo: 15,
-        },
-        {
-            creditoId: 2,
-            clienteId: 3,
-            nombreCliente: 'TEST 2',
-            credito: 50.00,
-            plazo: 30,
-        },
-    ];
 
     const [creditoId, setCreditoId] = useState(0);
     const [clienteId, setClienteId] = useState(0);
@@ -66,6 +49,8 @@ function CreditCrudContainer () {
     const [credito, setCredito] = useState(0);
     const [plazo, setPlazo] = useState(0);
     const [mensajeBusqueda, setMensajeBusqueda] = useState('');
+    const [mensajeIngreso, setMensajeIngreso] = useState('');
+    const [mensajeTabla, setMensajeTabla] = useState('');
     const [tableData, setTableData] = useState([]);
 
     const getData = async () => {
@@ -76,9 +61,8 @@ function CreditCrudContainer () {
                 validateStatus: status => true
             })
 
-            const data = new XMLParser().parseFromString(respuesta.data)
-            // console.log(data.children[1].children[0]);
             if (respuesta.status >= 200 && respuesta.status < 300) {
+                const data = new XMLParser().parseFromString(respuesta.data)
                 const tempData = [];
                 if(data.children[1].children.length < 1) {
                     setTableData([]);
@@ -95,10 +79,10 @@ function CreditCrudContainer () {
                 }
                 setTableData(tempData);
             } else {
-                console.log(respuesta.data);
+                setMensajeTabla('Error ' + respuesta.status + ': ' + respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeTabla('Error: ' + error.message)
         }
     }
 
@@ -118,6 +102,7 @@ function CreditCrudContainer () {
         setCredito('');
         setPlazo('');
         setMensajeBusqueda('');
+        setMensajeIngreso('');
     };
 
     const onSubmit = async () => {
@@ -161,11 +146,12 @@ function CreditCrudContainer () {
                 console.log(respuesta.data);
                 getData();
                 clearForm();
+                setMensajeIngreso('Exito en la operacion');
             } else {
-                console.log(respuesta.data);
+                setMensajeIngreso(respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeIngreso('Error: ' + error.message);
         }
     };
 
@@ -185,10 +171,10 @@ function CreditCrudContainer () {
             if (respuesta.status >= 200 && respuesta.status < 300) {
                getData();
             } else {
-                console.log(respuesta.data);
+                setMensajeTabla('Error ' + respuesta.status + ': ' + respuesta.data);
             }
         } catch (error) {
-            console.log('Error: ' + error.message)
+            setMensajeTabla('Error: ' + error.message);
         }
     } 
 
@@ -228,7 +214,7 @@ function CreditCrudContainer () {
     );
 
     return <>
-        <div id="formSegment">
+        <div className="formSegment">
             <CreditForm 
                 onSubmit={onSubmit}
                 setCreditoId={setCreditoId}
@@ -243,9 +229,11 @@ function CreditCrudContainer () {
                 credito={credito}
                 plazo={plazo}
                 mensajeBusqueda={mensajeBusqueda}
+                mensajeIngreso={mensajeIngreso}
             />
         </div>
         <div className="tableSegment">
+            <p className="tableMessage">{mensajeTabla}</p>
             <DataTable columns={columns} data={tableData}/>
         </div>
     </>

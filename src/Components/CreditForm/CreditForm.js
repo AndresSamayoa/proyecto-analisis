@@ -27,25 +27,28 @@ function CreditForm (props) {
 
     return <div className="formContainer">
         <form onSubmit={submitForm} >
-        <SearchInput
-            label="Cliente (buscar por email o codigo)"
-            value={props.valorBuscadorCliente}
-            setValue={props.setValorBuscadorCliente}
-            searchValueFunction={props.searchCliente}
-            messageSearch={props.mensajeBusqueda}
-        />
-        <div className="inputContainer">
-            <label>Credito</label>
-            <input type="number" id="txtCredito" value={props.credito} onChange={changeCredito}/>
-        </div>
-        <div className="inputContainer">
-            <label>Plazo</label>
-            <input type="number" id="txtPlazo" value={props.plazo} onChange={changePlazo}/>
-        </div>
-        <div className="inputContainer">
-            <input type="submit" value={props.creditoId > 0 ? "Actualizar" : "Crear"} />
-            <input type="submit" value="Cancelar" onClick={cancelForm}/>
-        </div>
+            <SearchInput
+                label="Cliente (buscar por email o codigo)"
+                value={props.valorBuscadorCliente}
+                setValue={props.setValorBuscadorCliente}
+                searchValueFunction={props.searchCliente}
+                messageSearch={props.mensajeBusqueda}
+            />
+            <div className="inputContainer">
+                <label>Credito</label>
+                <input type="number" id="txtCredito" value={props.credito} onChange={changeCredito}/>
+            </div>
+            <div className="inputContainer">
+                <label>Plazo</label>
+                <input type="number" id="txtPlazo" value={props.plazo} onChange={changePlazo}/>
+            </div>
+            <div className="inputContainer">
+                <input type="submit" value={props.creditoId > 0 ? "Actualizar" : "Crear"} />
+                <input type="submit" value="Cancelar" onClick={cancelForm}/>
+            </div>
+            <div className="submitMessage">
+                {props.mensajeIngreso}
+            </div>
         </form>
     </div>
 }
