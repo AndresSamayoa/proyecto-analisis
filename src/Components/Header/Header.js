@@ -15,6 +15,7 @@ function Header() {
             <Link to='/customercontact'>Contactos de cliente</Link>
             <Link to='/sale'>Ventas</Link>
             <Link to='/document'>Documentos</Link>
+            <Link to='/reports'>Reportes</Link>
         </div>
     </div>
 }

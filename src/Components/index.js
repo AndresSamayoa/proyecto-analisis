@@ -18,6 +18,7 @@ import SaleDetailForm from './SaleDetailForm/SaleDetailForm';
 import SaleDetailCrudContainer from './SaleDetailCrudContainer/SaleDetailCrudContainer';
 import DocumentForm from './DocumentForm/DocumentForm';
 import DocumentCrudContainer from './DocumentCrudContainer/DocumentCrudContainer';
+import GeneralCXCReport from './GeneralCXCReport/GeneralCXCReport';
 
 export {
     CustomerForm,
@@ -40,4 +41,5 @@ export {
     SaleDetailCrudContainer,
     DocumentForm,
     DocumentCrudContainer,
+    GeneralCXCReport
 }
