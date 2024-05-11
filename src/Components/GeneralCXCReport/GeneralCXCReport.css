@@ -18,12 +18,28 @@
 }
 
 .tableContainer{
+    padding-left: 5%;
+    width: 100%;
+    padding-top: 1%;
+    padding-bottom: 1%;
+}
+
+.titleContainer{
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: first baseline;
     align-items: flex-start;
     width: 100%;
     padding-top: 1%;
+    padding-left: 5%;
+}
+
+.imagelogo{
+    width: 6rem;
+}
+
+.ReportTitle {
+    padding-left: 1%;
 }
 
 .messageContainer {

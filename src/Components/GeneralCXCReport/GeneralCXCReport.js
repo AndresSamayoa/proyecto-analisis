@@ -1,13 +1,17 @@
 import './GeneralCXCReport.css';
+import logo from '../../Assets/Logo.png';
 
 import axios from 'axios';
 import XMLParser from 'react-xml-parser';
 import * as moment from 'moment';
+import { usePDF } from 'react-to-pdf';
 import { useState, useEffect } from 'react';
 
 const net_base_url = process.env.REACT_APP_DOT_NET_API_BASE;
 
 function GeneralCXCReport () {
+
+    const {toPDF, targetRef} = usePDF({filename: `CXCGeneral(${moment().format('DD-MM-YYYY hh:mm')}).pdf`});
 
     const [mensajeTabla, setMensajeTabla] = useState('');
     const [tableData, setTableData] = useState([]);
@@ -116,15 +120,18 @@ function GeneralCXCReport () {
 
     return <div>
         <div className='controlsContainer'>
-            <button onClick={getData}>Exportar PDF</button>
+            <button onClick={() => toPDF()}>Exportar PDF</button>
             <button onClick={getData}>Cargar datos</button>
         </div>
         <div className='messageContainer'>
             <p className="tableMessage">{mensajeTabla}</p>
         </div>
-        <div className='cxcReportContainer'>
+        <div className='cxcReportContainer' ref={targetRef}>
             <div className='tableContainer'>
-                <h1>Reporte general CXC</h1>
+            </div>
+            <div className='titleContainer'>
+                <img src={logo} className='imagelogo'/>
+                <h1 className='ReportTitle'>Reporte general CXC</h1>
             </div>
             <div className='tableContainer'>
                 <table className='tableData'>
