@@ -53,12 +53,16 @@ const DocumentCrudContainer = () => {
             selector: row => row.valor,
         },
         {
-            name: 'Numero Emision',
-            selector: row => row.numeroEmision,
+            name: 'Serie',
+            selector: row => row.serie,
         },
         {
-            name: 'Serie Emision',
-            selector: row => row.serieEmision,
+            name: 'Numero documento',
+            selector: row => row.numeroDocumento,
+        },
+        {
+            name: 'Numero Emision',
+            selector: row => row.numeroEmision,
         },
         {
             name: 'Fecha emision',
@@ -82,11 +86,13 @@ const DocumentCrudContainer = () => {
     const [buscadorDocumentoReferencia, setBuscadorDocumentoReferenciaId] = useState('');
     const [mensajeBuscadorDocumentoReferencia, setMensajeBuscadorDocumentoReferencia] = useState('');
     const [valor, setValor] = useState(0);
+    const [serie, setSerie] = useState('');
+    const [numeroDocumento, setNumeroDocumento] = useState('');
     const [numeroEmision, setNumeroEmision] = useState('');
-    const [serieEmision, setSerieEmision] = useState('');
     const [fechaEmision, setFechaEmision] = useState('');
     const [fechaAnulacion, setFechaAnulacion] = useState('');
-    const [tipoDocumento, setTipoDocumento] = useState('Factura');
+    const [tipoDocumento, setTipoDocumento] = useState('factura');
+    const [usarTotal, setUsarTotal] = useState(false);
     const [mensajeIngreso, setMensajeIngreso] = useState('');
     const [mensajeTabla, setMensajeTabla] = useState('');
     const [tableData, setTableData] = useState([]);
@@ -109,8 +115,9 @@ const DocumentCrudContainer = () => {
                         numeroAutorizacion: item.children.find(obj => obj.name === 'VEN_NO_AUTORIZACION') ? item.children.find(obj => obj.name === 'VEN_NO_AUTORIZACION').value : null,
                         documentoReferenciaId: item.children.find(obj => obj.name === 'DOC_DOCUMENTO_ASOCIADO') ? item.children.find(obj => obj.name === 'DOC_DOCUMENTO_ASOCIADO').value : null,
                         valor: item.children.find(obj => obj.name === 'DOC_VALOR') ? item.children.find(obj => obj.name === 'DOC_VALOR').value : null,
-                        numeroEmision: item.children.find(obj => obj.name === 'DOC_NO_DOCUMENTO') ? item.children.find(obj => obj.name === 'DOC_NO_DOCUMENTO').value : null,
-                        serieEmision: item.children.find(obj => obj.name === 'DOC_NO_EMISION') ? item.children.find(obj => obj.name === 'DOC_NO_EMISION').value : null,
+                        serie: item.children.find(obj => obj.name === 'DOC_SERIE') ? item.children.find(obj => obj.name === 'DOC_SERIE').value : null,
+                        numeroDocumento: item.children.find(obj => obj.name === 'DOC_NO_DOCUMENTO') ? item.children.find(obj => obj.name === 'DOC_NO_DOCUMENTO').value : null,
+                        numeroEmision: item.children.find(obj => obj.name === 'DOC_NO_EMISION') ? item.children.find(obj => obj.name === 'DOC_NO_EMISION').value : null,
                         fechaEmision: item.children.find(obj => obj.name === 'DOC_FECHA_EMISION') ? item.children.find(obj => obj.name === 'DOC_FECHA_EMISION').value : null,
                         fechaAnulacion: item.children.find(obj => obj.name === 'DOC_FECHA_ANULACION') ? item.children.find(obj => obj.name === 'DOC_FECHA_ANULACION').value : null,
                         tipoDocumento: item.children.find(obj => obj.name === 'DOC_TIPO_DOCUMENTO') ? item.children.find(obj => obj.name === 'DOC_TIPO_DOCUMENTO').value : null,
@@ -132,13 +139,15 @@ const DocumentCrudContainer = () => {
         setDocumentoReferenciaId(row.documentoReferenciaId);
         setBuscadorDocumentoReferenciaId(row.documentoReferenciaId);
         setValor(row.valor);
+        setSerie(row.serie);
+        setNumeroDocumento(row.numeroDocumento);
         setNumeroEmision(row.numeroEmision);
-        setSerieEmision(row.serieEmision);
         setFechaEmision(row.fechaEmision);
         setFechaAnulacion(row.fechaAnulacion);
         setTipoDocumento(row.tipoDocumento);
         setMensajeBuscadorDocumentoReferencia('');
         setMensajeBuscadorVenta('');
+        setUsarTotal(false);
     };
 
     const onSubmit = async () => {
@@ -155,8 +164,9 @@ const DocumentCrudContainer = () => {
                 pDoc_venta: ventaId,
                 pDoc_documento_asociado: documentoReferenciaId,
                 pDoc_valor: valor,
-                pDoc_no_documento: numeroEmision,
-                pDoc_no_emision: serieEmision,
+                p_serie: serie || null,
+                pDoc_no_documento: numeroDocumento || null,
+                pDoc_no_emision: numeroEmision || null,
                 pDoc_tipo_documento: tipoDocumento,
             });
         } else {
@@ -166,10 +176,11 @@ const DocumentCrudContainer = () => {
                 pDoc_venta: ventaId,
                 pDoc_documento_asociado: documentoReferenciaId,
                 pDoc_valor: valor,
-                pDoc_no_documento: numeroEmision || null,
-                pDoc_no_emision: serieEmision ||  null,
+                p_serie: serie || null,
+                pDoc_no_documento: numeroDocumento || null,
+                pDoc_no_emision: numeroEmision ||  null,
                 pDoc_tipo_documento: tipoDocumento,
-                pDoc_valor_total: 0
+                pDoc_valor_total: usarTotal ? 1 : 0
             });
         }
 
@@ -204,7 +215,7 @@ const DocumentCrudContainer = () => {
         try {
             const respuesta = await axios({
                 method: 'POST',
-                url: net_base_url+'/CXC_Documento.asmx/ClientesEliminar',
+                url: net_base_url+'/CXC_Documento.asmx/DocumentoEliminar',
                 data: querystring.stringify({
                     p_documento: documentId
                 }),
@@ -227,9 +238,9 @@ const DocumentCrudContainer = () => {
         try {
             const respuesta = await axios({
                 method: 'POST',
-                url: net_base_url+'/Proyecto-Analisis.asmx/DocumentosEmitir',
+                url: net_base_url+'/Proyecto-Analisis.asmx/Documento_asignar_emision_documento',
                 data: querystring.stringify({
-                    doc_documento: documentId
+                    p_documento: documentId
                 }),
                 validateStatus: status => true
             })
@@ -250,9 +261,9 @@ const DocumentCrudContainer = () => {
         try {
             const respuesta = await axios({
                 method: 'POST',
-                url: net_base_url+'/Proyecto-Analisis.asmx/DocumentosAnular',
+                url: net_base_url+'/Proyecto-Analisis.asmx/Documento_asignar_anulacion_documento',
                 data: querystring.stringify({
-                    doc_documento: documentId
+                    p_documento: documentId
                 }),
                 validateStatus: status => true
             })
@@ -278,12 +289,14 @@ const DocumentCrudContainer = () => {
         setBuscadorDocumentoReferenciaId('');
         setMensajeBuscadorDocumentoReferencia('');
         setValor(0);
+        setSerie('');
+        setNumeroDocumento('');
         setNumeroEmision('');
-        setSerieEmision('');
         setFechaEmision('');
         setFechaAnulacion('');
         setTipoDocumento('Factura');
         setMensajeIngreso('');
+        setUsarTotal(false)
     };
 
     const buscarVenta = async () => {
@@ -359,20 +372,25 @@ const DocumentCrudContainer = () => {
                 setValorBuscadorVenta={setBuscadorVenta}
                 setValorBuscadorDocumento={setBuscadorDocumentoReferenciaId}
                 setValor={setValor}
+                setSerie={setSerie}
+                setNumeroDocumento={setNumeroDocumento}
                 setNumeroEmision={setNumeroEmision}
-                setSerieEmision={setSerieEmision}
                 setTipoDocumenton={setTipoDocumento}
+                setUsarTotal={setUsarTotal}
+                documentoId={documentoId}
                 valorBuscadorVenta={buscadorVenta}
                 mensajeBusquedaVenta={mensajeBuscadorVenta}
                 valorBuscadorDocumento={buscadorDocumentoReferencia}
                 mensajeBusquedaDocumento={mensajeBuscadorDocumentoReferencia}
                 valor={valor}
+                serie={serie}
+                numeroDocumento={numeroDocumento}
                 numeroEmision={numeroEmision}
-                serieEmision={serieEmision}
                 fechaEmision={fechaEmision}
                 fechaAnulacion={fechaAnulacion}
                 tipoDocumento={tipoDocumento}
                 mensajeIngreso={mensajeIngreso}
+                usarTotal={usarTotal}
             />
         </div>
         <div className="tableSegment">

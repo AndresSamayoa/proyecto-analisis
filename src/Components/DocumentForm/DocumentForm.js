@@ -4,13 +4,22 @@ import SearchInput from '../SearchInput/SearchInput';
 
 function DocumentForm (props) {
 
-    const changeSerieEmision = (e) => {
-        props.setSerieEmision(e.target.value);
-    };
-
     const changeNumeroEmision = (e) => {
         props.setNumeroEmision(e.target.value);
     };
+
+    const changeSerie = (e) => {
+        props.setSerie(e.target.value);
+    };
+
+    const changeNumeroDocumento = (e) => {
+        props.setNumeroDocumento(e.target.value);
+    };
+
+    const changeValorTotal = (e) => {
+        props.setUsarTotal(e.target.value);
+
+    }
 
     const changeTipoDocumento = (e) => {
         props.setTipoDocumenton(e.target.value);
@@ -51,12 +60,20 @@ function DocumentForm (props) {
             <input type="number" id="txtValor" value={props.valor} onChange={changeValor}/>
         </div>
         <div className="inputContainer">
-            <label>Numero de emision</label>
-            <input type="number"  id="txtNumeroEmision" value={props.numeroEmision} onChange={changeNumeroEmision}/>
+            <label>Total venta</label>
+            <input type="checkbox" id="txtValorTotal" value={props.usarTotal} onChange={changeValorTotal}/>
         </div>
         <div className="inputContainer">
-            <label>Serie de emision</label>
-            <input type="number" id="txtSerieEmision" value={props.serieEmision} onChange={changeSerieEmision}/>
+            <label>Serie</label>
+            <input type="text"  id="txtSerie" value={props.serie} onChange={changeSerie}/>
+        </div>
+        <div className="inputContainer">
+            <label>Numero de documento</label>
+            <input type="number"  id="txtNumeroDocumento" value={props.numeroDocumento} onChange={changeNumeroDocumento}/>
+        </div>
+        <div className="inputContainer">
+            <label>Numero de emision</label>
+            <input type="text" id="txtNumeroEmision" value={props.numeroEmision} onChange={changeNumeroEmision}/>
         </div>
         <div className="inputContainer">
             <label>Tipo de documento</label>
@@ -70,7 +87,7 @@ function DocumentForm (props) {
             </select>
         </div>
         <div className="inputContainer">
-            <input type="submit" value={props.creditoId > 0 ? "Actualizar" : "Crear"} />
+            <input type="submit" value={props.documentoId > 0 ? "Actualizar" : "Crear"} />
             <input type="submit" value="Cancelar" onClick={cancelForm}/>
         </div>
         <div className="submitMessage">
