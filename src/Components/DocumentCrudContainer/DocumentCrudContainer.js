@@ -238,7 +238,7 @@ const DocumentCrudContainer = () => {
         try {
             const respuesta = await axios({
                 method: 'POST',
-                url: net_base_url+'/Proyecto-Analisis.asmx/Documento_asignar_emision_documento',
+                url: net_base_url+'/CXC_Documento.asmx/Documento_asignar_emision_documento',
                 data: querystring.stringify({
                     p_documento: documentId
                 }),
@@ -261,7 +261,7 @@ const DocumentCrudContainer = () => {
         try {
             const respuesta = await axios({
                 method: 'POST',
-                url: net_base_url+'/Proyecto-Analisis.asmx/Documento_asignar_anulacion_documento',
+                url: net_base_url+'/CXC_Documento.asmx/Documento_asignar_anulacion_documento',
                 data: querystring.stringify({
                     p_documento: documentId
                 }),

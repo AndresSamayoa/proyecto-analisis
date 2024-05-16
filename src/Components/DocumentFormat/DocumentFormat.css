@@ -1,0 +1,75 @@
+.doc{
+    width: 100%;
+}
+
+.documentContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-start;
+    width: 75%;
+    padding-top: 1%;
+}
+
+.documentCenterer{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding-top: 1%;
+}
+
+.controlsContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding-top: 1%;
+}
+
+.searcherContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-left: 1%;
+}
+
+.tableDocumentContainer{
+    width: 100%;
+    padding-top: 1%;
+    padding-bottom: 5%;
+}
+
+.headerDocumentContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: flex-start;
+    width: 100%;
+    padding-top: 1%;
+}
+
+.headerDocumentItem{
+    width: 50%;
+}
+
+.imagelogo{
+    width: 6rem;
+}
+
+.ReportTitle {
+    padding-left: 1%;
+}
+
+table, th, td {
+    border: 1px solid;
+}
+
+.tableDocumentData {
+    width: 100%;
+    border: 1px solid;
+    border-collapse: collapse;
+}
