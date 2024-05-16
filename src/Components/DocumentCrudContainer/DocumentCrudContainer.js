@@ -31,13 +31,13 @@ const DocumentCrudContainer = () => {
         {
             name: '',
             selector: row => {
-                return <button disabled={!row.fechaEmision} onClick={() => {cancelRow(row.documentoId)}} >Anular</button>
+                return <button disabled={!row.fechaEmision || row.fechaAnulacion} onClick={() => {cancelRow(row.documentoId)}} >Anular</button>
             },
         },
         {
             name: '',
             selector: row => {
-                return <button disabled={row.fechaEmision && !row.fechaAnulacion} onClick={() => {issueRow(row.documentoId)}} >Emitir</button>
+                return <button disabled={row.fechaEmision} onClick={() => {issueRow(row.documentoId)}} >Emitir</button>
             },
         },
         {
