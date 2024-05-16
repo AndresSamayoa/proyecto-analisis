@@ -1,6 +1,6 @@
 import './Reports.css';
 
-import { GeneralCXCReport } from '../../Components'
+import { GeneralCXCReport, DocumentFormat } from '../../Components'
 
 import {useState} from 'react';
 
@@ -12,9 +12,13 @@ function Reports () {
     return <div className="reportsPage">
         <div className="reportsMenu">
             <button onClick={() => setReport(0)}>Reporte general CXC</button>
+            <button onClick={() => setReport(1)}>Documento</button>
         </div>
-        {report == 0 &&
+        {report === 0 &&
             <GeneralCXCReport />
+        }
+        {report === 1 &&
+            <DocumentFormat />
         }
     </div>
 }
