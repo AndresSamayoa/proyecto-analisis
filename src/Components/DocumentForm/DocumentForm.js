@@ -17,7 +17,7 @@ function DocumentForm (props) {
     };
 
     const changeValorTotal = (e) => {
-        props.setUsarTotal(e.target.value);
+        props.setUsarTotal(e.target.checked);
 
     }
 
