@@ -61,7 +61,7 @@ function DocumentForm (props) {
         </div>
         <div className="inputContainer">
             <label>Total venta</label>
-            <input type="checkbox" id="txtValorTotal" value={props.usarTotal} onChange={changeValorTotal}/>
+            <input type="checkbox" id="txtValorTotal" checked={props.usarTotal} onChange={changeValorTotal}/>
         </div>
         <div className="inputContainer">
             <label>Serie</label>

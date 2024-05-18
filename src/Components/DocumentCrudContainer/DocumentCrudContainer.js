@@ -285,7 +285,7 @@ const DocumentCrudContainer = () => {
         setVentaId(0);
         setBuscadorVenta('');
         setMensajeBuscadorVenta('');
-        setDocumentoReferenciaId(null);
+        setDocumentoReferenciaId(0);
         setBuscadorDocumentoReferenciaId('');
         setMensajeBuscadorDocumentoReferencia('');
         setValor(0);
