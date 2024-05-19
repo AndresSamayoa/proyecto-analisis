@@ -197,7 +197,7 @@ function SaleCrudContainer () {
         try {
             const respuesta = await axios({
                 method: 'POST',
-                url: net_base_url+'/CXC_Venta.asmx/ClientesEliminar',
+                url: net_base_url+'/CXC_Venta.asmx/VentasEliminar',
                 data: querystring.stringify({
                     Ven_p_venta: saleId
                 }),
@@ -273,7 +273,7 @@ function SaleCrudContainer () {
         try {
             const respuesta = await axios({
                 method: 'POST',
-                url: net_base_url+'/Proyecto-Analisis.asmx/EmpleadoBuscar',
+                url: net_base_url+'/Proyecto-Analisis.asmx/EmpleadosBuscar',
                 data: querystring.stringify({
                     emp_empleado: buscadorEmpleado,
                 }),

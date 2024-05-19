@@ -1,5 +1,6 @@
 import './GeneralCXCReport.css';
 import logo from '../../Assets/Logo.png';
+import ExportExcel from '../ExcelGenerator/ExcelGenerator'
 
 import axios from 'axios';
 import XMLParser from 'react-xml-parser';
@@ -15,6 +16,7 @@ function GeneralCXCReport () {
 
     const [mensajeTabla, setMensajeTabla] = useState('');
     const [tableData, setTableData] = useState([]);
+    const [excelData, setExcelData] = useState([])
 
     const getRows = (data) => {
         if (data.length <= 0) return;
@@ -104,6 +106,7 @@ function GeneralCXCReport () {
                         vencido: item.children.find(obj => obj.name === 'VENCIDO') ? item.children.find(obj => obj.name === 'VENCIDO').value : null, 
                     })
                 }
+                setExcelData(tempData);
                 getRows(tempData);
             } else {
                 setMensajeTabla('Error ' + respuesta.status + ': ' + respuesta.data);
@@ -122,6 +125,10 @@ function GeneralCXCReport () {
         <div className='controlsContainer'>
             <button onClick={() => toPDF()}>Exportar PDF</button>
             <button onClick={getData}>Cargar datos</button>
+            <ExportExcel 
+                excelData={excelData} 
+                fileName={moment().format('DD-MM-YYYY hh:mm')}
+                sheetName="Reporte" />
         </div>
         <div className='messageContainer'>
             <p className="tableMessage">{mensajeTabla}</p>

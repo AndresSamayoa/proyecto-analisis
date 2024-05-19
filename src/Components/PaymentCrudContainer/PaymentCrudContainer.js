@@ -161,7 +161,7 @@ function PaymentCrudContainer (props) {
         try {
             const respuesta = await axios({
                 method: 'POST',
-                url: net_base_url+'/CXC_Abono.asmx/ClientesEliminar',
+                url: net_base_url+'/CXC_Abono.asmx/AbonoEliminar',
                 data: querystring.stringify({
                     ID_ABONO: paymentId
                 }),
