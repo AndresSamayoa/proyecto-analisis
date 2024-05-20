@@ -275,7 +275,7 @@ function SaleCrudContainer () {
                 method: 'POST',
                 url: net_base_url+'/Proyecto-Analisis.asmx/EmpleadosBuscar',
                 data: querystring.stringify({
-                    emp_empleado: buscadorEmpleado,
+                    p_id: buscadorEmpleado,
                 }),
                 validateStatus: status => true
             })
