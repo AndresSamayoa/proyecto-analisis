@@ -1,6 +1,6 @@
 import './GeneralCXCReport.css';
 import logo from '../../Assets/Logo.png';
-import ExportExcel from '../ExcelGenerator/ExcelGenerator'
+import ExportExcel from '../ExcelGenerator/ExcelGenerator';
 
 import axios from 'axios';
 import XMLParser from 'react-xml-parser';
