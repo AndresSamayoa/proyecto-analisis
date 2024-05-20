@@ -16,7 +16,7 @@ function GeneralCXCReport () {
 
     const [mensajeTabla, setMensajeTabla] = useState('');
     const [tableData, setTableData] = useState([]);
-    const [excelData, setExcelData] = useState([])
+    const [excelData, setExcelData] = useState([]);
 
     const getRows = (data) => {
         if (data.length <= 0) return;
@@ -123,11 +123,11 @@ function GeneralCXCReport () {
 
     return <div>
         <div className='controlsContainer'>
-            <button onClick={() => toPDF()}>Exportar PDF</button>
             <button onClick={getData}>Cargar datos</button>
+            <button onClick={() => toPDF()}>Exportar PDF</button>
             <ExportExcel 
                 excelData={excelData} 
-                fileName={moment().format('DD-MM-YYYY hh:mm')}
+                fileName={`CXCGeneral(${moment().format('DD-MM-YYYY hh:mm')})`}
                 sheetName="Reporte" />
         </div>
         <div className='messageContainer'>
