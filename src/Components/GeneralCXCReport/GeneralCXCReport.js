@@ -12,7 +12,7 @@ const net_base_url = process.env.REACT_APP_DOT_NET_API_BASE;
 
 function GeneralCXCReport () {
 
-    const {toPDF, targetRef} = usePDF({filename: `CXCGeneral(${moment().format('DD-MM-YYYY hh:mm')}).pdf`});
+    const {toPDF, targetRef} = usePDF({filename: `Cobranza(${moment().format('DD-MM-YYYY hh:mm')}).pdf`});
 
     const [mensajeTabla, setMensajeTabla] = useState('');
     const [tableData, setTableData] = useState([]);
@@ -30,9 +30,13 @@ function GeneralCXCReport () {
                 respuesta.push(
                     <tr className='itemRow'>
                         <td>{item.venta}</td>
+                        <td>{item.nit}</td>
                         <td>{item.cliente}</td>
                         <td>{item.email_cliente}</td>
                         <td>{item.telefono_cliente}</td>
+                        <td>{item.serie}</td>
+                        <td>{item.numero}</td>
+                        <td>{item.uuid}</td>
                         <td>Q.{item.total}</td>
                         <td>Q.{item.total_abonado}</td>
                         <td>Q.{item.total_por_pagar}</td>
@@ -44,19 +48,23 @@ function GeneralCXCReport () {
             } else {
                 respuesta.push(
                     <tr>
-                        <td colSpan={7}><b>Total por pagar {lastClient}</b></td>
-                        <td colSpan={3}><b>Q.{clientAcum.toFixed(2)}</b></td>
+                        <td colSpan={9}><b>Total por pagar {lastClient}</b></td>
+                        <td colSpan={5}><b>Q.{clientAcum.toFixed(2)}</b></td>
                     </tr>
                 );
                 respuesta.push(
                     <tr className='itemRow'>
                         <td>{item.venta}</td>
+                        <td>{item.nit}</td>
                         <td>{item.cliente}</td>
                         <td>{item.email_cliente}</td>
                         <td>{item.telefono_cliente}</td>
-                        <td>Q.{Number(item.total).toFixed(2)}</td>
-                        <td>Q.{Number(item.total_abonado).toFixed(2)}</td>
-                        <td>Q.{Number(item.total_por_pagar).toFixed(2)}</td>
+                        <td>{item.serie}</td>
+                        <td>{item.numero}</td>
+                        <td>{item.uuid}</td>
+                        <td>Q.{item.total}</td>
+                        <td>Q.{item.total_abonado}</td>
+                        <td>Q.{item.total_por_pagar}</td>
                         <td>{moment(item.fecha_venta).format('DD-MM-YYYY')}</td>
                         <td>{moment(item.fecha_vencimiento).format('DD-MM-YYYY')}</td>
                         <td>{item.vencido > 0 ? 'Si' : 'No'}</td>
@@ -68,8 +76,8 @@ function GeneralCXCReport () {
         }
         respuesta.push(
             <tr>
-                <td colSpan={7}><b>Total por pagar {lastClient}</b></td>
-                <td colSpan={3}><b>Q.{clientAcum.toFixed(2)}</b></td>
+                <td colSpan={9}><b>Total por pagar {lastClient}</b></td>
+                <td colSpan={5}><b>Q.{clientAcum.toFixed(2)}</b></td>
             </tr>
         );
 
@@ -81,7 +89,7 @@ function GeneralCXCReport () {
             setTableData([]);
             const respuesta = await axios({
                 method: 'POST',
-                url: net_base_url+'/Proyecto-Analisis.asmx/fun_reporte_general_cxc',
+                url: net_base_url+'/CXC_reportes.asmx/Reporte_cobranza',
                 validateStatus: status => true
             })
 
@@ -95,9 +103,13 @@ function GeneralCXCReport () {
                     console.log(item.children)
                     tempData.push({
                         venta: item.children.find(obj => obj.name === 'VENTA') ? item.children.find(obj => obj.name === 'VENTA').value : null, 
+                        nit: item.children.find(obj => obj.name === 'NIT') ? item.children.find(obj => obj.name === 'NIT').value : null, 
                         cliente: item.children.find(obj => obj.name === 'CLIENTE') ? item.children.find(obj => obj.name === 'CLIENTE').value : null, 
                         email_cliente: item.children.find(obj => obj.name === 'EMAIL_CLIENTE') ? item.children.find(obj => obj.name === 'EMAIL_CLIENTE').value : null, 
                         telefono_cliente: item.children.find(obj => obj.name === 'TELEFONO_CLIENTE') ? item.children.find(obj => obj.name === 'TELEFONO_CLIENTE').value : null, 
+                        serie: item.children.find(obj => obj.name === 'SERIE') ? item.children.find(obj => obj.name === 'SERIE').value : null, 
+                        numero: item.children.find(obj => obj.name === 'NUMERO') ? item.children.find(obj => obj.name === 'NUMERO').value : null, 
+                        uuid: item.children.find(obj => obj.name === 'UUID') ? item.children.find(obj => obj.name === 'UUID').value : null, 
                         total: item.children.find(obj => obj.name === 'TOTAL') ? item.children.find(obj => obj.name === 'TOTAL').value : null, 
                         total_abonado: item.children.find(obj => obj.name === 'TOTAL_ABONADO') ? item.children.find(obj => obj.name === 'TOTAL_ABONADO').value : null, 
                         total_por_pagar: item.children.find(obj => obj.name === 'TOTAL_POR_PAGAR') ? item.children.find(obj => obj.name === 'TOTAL_POR_PAGAR').value : null, 
@@ -127,7 +139,7 @@ function GeneralCXCReport () {
             <button onClick={() => toPDF()}>Exportar PDF</button>
             <ExportExcel 
                 excelData={excelData} 
-                fileName={`CXCGeneral(${moment().format('DD-MM-YYYY hh:mm')})`}
+                fileName={`Cobranza(${moment().format('DD-MM-YYYY hh:mm')})`}
                 sheetName="Reporte" />
         </div>
         <div className='messageContainer'>
@@ -136,30 +148,37 @@ function GeneralCXCReport () {
         <div className='cxcReportContainer' ref={targetRef}>
             <div className='tableContainer'>
             </div>
+            
             <div className='titleContainer'>
                 <img src={logo} className='imagelogo'/>
-                <h1 className='ReportTitle'>Reporte general CXC</h1>
+                <h1 className='ReportTitle'>Reporte de Cobranza</h1>
             </div>
-            <div className='tableContainer'>
-                <table className='tableData'>
-                    <thead>
-                        <tr>
-                            <th>Venta</th>
-                            <th>Cliente</th>
-                            <th>Email cliente</th>
-                            <th>Telefono cliente</th>
-                            <th>Total venta</th>
-                            <th>Total abonado</th>
-                            <th>Total por pagar</th>
-                            <th>Fecha venta</th>
-                            <th>Fecha vencimiento</th>
-                            <th>Vencido</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {tableData}
-                    </tbody>
-                </table>
+            <div className='tableCenterer'>
+                <div className='tableContainer'>
+                    <table className='tableData'>
+                        <thead>
+                            <tr>
+                                <th>Venta</th>
+                                <th>Nit</th>
+                                <th>Cliente</th>
+                                <th>Email cliente</th>
+                                <th>Telefono cliente</th>
+                                <th>Serie</th>
+                                <th>Numero</th>
+                                <th>UUID</th>
+                                <th>Total venta</th>
+                                <th>Total abonado</th>
+                                <th>Total por pagar</th>
+                                <th>Fecha venta</th>
+                                <th>Fecha vencimiento</th>
+                                <th>Vencido</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {tableData}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

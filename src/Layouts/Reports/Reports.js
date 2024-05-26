@@ -17,7 +17,7 @@ function Reports () {
 
     return <div className="reportsPage">
         <div className="reportsMenu">
-            <button onClick={() => setReport(0)}>Reporte general CXC</button>
+            <button onClick={() => setReport(0)}>Reporte de Cobranza</button>
             <button onClick={() => setReport(1)}>Documento</button>
             <button onClick={() => setReport(2)}>Clientes frecuentes (cantidad)</button>
             <button onClick={() => setReport(3)}>Clientes frecuentes (valor)</button>
