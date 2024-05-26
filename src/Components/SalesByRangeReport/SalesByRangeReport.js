@@ -19,7 +19,7 @@ function SalesByRangeReport () {
     const [tableData, setTableData] = useState([]);
     const [excelData, setExcelData] = useState([]);
 
-    const {toPDF, targetRef} = usePDF({filename: `Ventas por fecha(${fechaInicial} - ${fechaFinal}).pdf`});
+    const {toPDF, targetRef} = usePDF({filename: `Libro de ventas(${fechaInicial} - ${fechaFinal}).pdf`});
 
     const getRows = (data) => {
         if (data.length <= 0) return;
@@ -111,7 +111,7 @@ function SalesByRangeReport () {
             <button onClick={() => toPDF()}>Exportar PDF</button>
             <ExportExcel 
                 excelData={excelData} 
-                fileName={`Ventas por fecha(${fechaInicial} - ${fechaFinal})`}
+                fileName={`Libro de ventas(${fechaInicial} - ${fechaFinal})`}
                 sheetName="Reporte" />
         </div>
         <div className='messageContainer'>
@@ -123,7 +123,7 @@ function SalesByRangeReport () {
             
             <div className='titleContainer'>
                 <img src={logo} className='imagelogo'/>
-                <h1 className='ReportTitle'>Ventas por fecha({fechaInicial} - {fechaFinal})</h1>
+                <h1 className='ReportTitle'>Libro de ventas({fechaInicial} - {fechaFinal})</h1>
             </div>
             <div className='tableCenterer'>
                 <div className='tableContainer'>
