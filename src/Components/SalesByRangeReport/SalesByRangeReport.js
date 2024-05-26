@@ -104,7 +104,7 @@ function SalesByRangeReport () {
                 <input type='date' onChange={e=> {e.target.value ? setFechaInicial(moment(e.target.value).format('YYYY-MM-DD')) : setFechaInicial(null)}}/>
             </div>
             <div className='controlItem'>
-                <label>Fecha inicial</label>
+                <label>Fecha final</label>
                 <input type='date' onChange={e=> {e.target.value ? setFechaFinal(moment(e.target.value).format('YYYY-MM-DD')) : setFechaFinal(null)}}/>
             </div>
             <button onClick={getData}>Cargar datos</button>

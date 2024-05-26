@@ -1,4 +1,4 @@
-import './CustomerAcountReport.css';
+import './PaymentByRangeReport.css';
 import logo from '../../Assets/Logo.png';
 import ExportExcel from '../ExcelGenerator/ExcelGenerator';
 
@@ -11,16 +11,15 @@ import querystring from 'querystring';
 
 const net_base_url = process.env.REACT_APP_DOT_NET_API_BASE;
 
-function CustomerAcountReport () {
+function PaymentByRangeReport () {
 
     const [mensajeTabla, setMensajeTabla] = useState('');
-    const [cliente, setCliente] = useState('');
     const [fechaInicial, setFechaInicial] = useState('');
     const [fechaFinal, setFechaFinal] = useState('');
     const [tableData, setTableData] = useState([]);
     const [excelData, setExcelData] = useState([]);
 
-    const {toPDF, targetRef} = usePDF({filename: `Estado de cuentas(${fechaInicial} - ${fechaFinal}).pdf`});
+    const {toPDF, targetRef} = usePDF({filename: `Pagos por fechas(${fechaInicial} - ${fechaFinal}).pdf`});
 
     const getRows = (data) => {
         if (data.length <= 0) return;
@@ -39,10 +38,10 @@ function CustomerAcountReport () {
                     <td>{item.uuid}</td>
                     <td>Q.{item.total}</td>
                     <td>Q.{item.total_abonado}</td>
-                    <td>Q.{item.total_por_pagar}</td>
+                    <td>{item.no_auth}</td>
+                    <td>{item.tipo_pago}</td>
                     <td>{moment(item.fecha_venta).format('DD-MM-YYYY')}</td>
-                    <td>{moment(item.fecha_vencimiento).format('DD-MM-YYYY')}</td>
-                    <td>{item.vencido > 0 ? 'Si' : 'No'}</td>
+                    <td>{moment(item.fecha_abono).format('DD-MM-YYYY')}</td>
                 </tr>
             );
         }
@@ -55,9 +54,8 @@ function CustomerAcountReport () {
             setTableData([]);
             const respuesta = await axios({
                 method: 'POST',
-                url: net_base_url+'/CXC_reportes.asmx/Reporte_estado_cuentas_cliente',
+                url: net_base_url+'/CXC_reportes.asmx/Reporte_pagos_fechas',
                 data: querystring.stringify({
-                    cliente: cliente,
                     fecha_inicial: fechaInicial,
                     fecha_final: fechaFinal,
                 }),
@@ -83,10 +81,10 @@ function CustomerAcountReport () {
                         uuid: item.children.find(obj => obj.name === 'UUID') ? item.children.find(obj => obj.name === 'UUID').value : null, 
                         total: item.children.find(obj => obj.name === 'TOTAL') ? item.children.find(obj => obj.name === 'TOTAL').value : null, 
                         total_abonado: item.children.find(obj => obj.name === 'TOTAL_ABONADO') ? item.children.find(obj => obj.name === 'TOTAL_ABONADO').value : null, 
-                        total_por_pagar: item.children.find(obj => obj.name === 'TOTAL_POR_PAGAR') ? item.children.find(obj => obj.name === 'TOTAL_POR_PAGAR').value : null, 
+                        no_auth: item.children.find(obj => obj.name === 'NO_AUTH') ? item.children.find(obj => obj.name === 'NO_AUTH').value : null, 
+                        tipo_pago: item.children.find(obj => obj.name === 'TIPO_PAGO') ? item.children.find(obj => obj.name === 'TIPO_PAGO').value : null, 
                         fecha_venta: item.children.find(obj => obj.name === 'FECHA_VENTA') ? item.children.find(obj => obj.name === 'FECHA_VENTA').value : null, 
-                        fecha_vencimiento: item.children.find(obj => obj.name === 'FECHA_VENCIMIENTO') ? item.children.find(obj => obj.name === 'FECHA_VENCIMIENTO').value : null, 
-                        vencido: item.children.find(obj => obj.name === 'VENCIDO') ? item.children.find(obj => obj.name === 'VENCIDO').value : null, 
+                        fecha_abono: item.children.find(obj => obj.name === 'FECHA_ABONO') ? item.children.find(obj => obj.name === 'FECHA_ABONO').value : null,
                     })
                 }
                 setExcelData(tempData);
@@ -102,10 +100,6 @@ function CustomerAcountReport () {
     return <div>
         <div className='controlsContainer'>
             <div className='controlItem'>
-                <label>Cliente (codigo)</label>
-                <input type='number' onChange={e=> {setCliente(e.target.value)}}/>
-            </div>
-            <div className='controlItem'>
                 <label>Fecha inicial</label>
                 <input type='date' onChange={e=> {e.target.value ? setFechaInicial(moment(e.target.value).format('YYYY-MM-DD')) : setFechaInicial(null)}}/>
             </div>
@@ -117,7 +111,7 @@ function CustomerAcountReport () {
             <button onClick={() => toPDF()}>Exportar PDF</button>
             <ExportExcel 
                 excelData={excelData} 
-                fileName={`Estado de cuentas(${fechaInicial} - ${fechaFinal})`}
+                fileName={`Pagos por fechas(${fechaInicial} - ${fechaFinal})`}
                 sheetName="Reporte" />
         </div>
         <div className='messageContainer'>
@@ -129,7 +123,7 @@ function CustomerAcountReport () {
             
             <div className='titleContainer'>
                 <img src={logo} className='imagelogo'/>
-                <h1 className='ReportTitle'>Estado de cuentas({fechaInicial} - {fechaFinal})</h1>
+                <h1 className='ReportTitle'>Pagos por fechas({fechaInicial} - {fechaFinal})</h1>
             </div>
             <div className='tableCenterer'>
                 <div className='tableContainer'>
@@ -146,10 +140,10 @@ function CustomerAcountReport () {
                                 <th>UUID</th>
                                 <th>Total venta</th>
                                 <th>Total abonado</th>
-                                <th>Total por pagar</th>
+                                <th>No auth.</th>
+                                <th>Tipo de pago</th>
                                 <th>Fecha venta</th>
-                                <th>Fecha vencimiento</th>
-                                <th>Vencido</th>
+                                <th>Fecha abono</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -162,4 +156,4 @@ function CustomerAcountReport () {
     </div>
 }
 
-export default CustomerAcountReport;
+export default PaymentByRangeReport;

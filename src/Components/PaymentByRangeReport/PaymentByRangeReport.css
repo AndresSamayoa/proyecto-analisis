@@ -1,0 +1,88 @@
+
+.cxcReportContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-start;
+    width: 100%;
+    padding-top: 1%;
+}
+
+.controlsContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding-top: 1%;
+}
+
+.tableContainer{
+    width: 85%;
+    padding-top: 1%;
+    padding-bottom: 1%;
+}
+
+.tableCenterer{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.titleContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    padding-top: 1%;
+    padding-left: 5%;
+}
+
+.imagelogo{
+    width: 6rem;
+}
+
+.ReportTitle {
+    padding-left: 1%;
+}
+
+.messageContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: flex-start;
+    width: 100%;
+    padding-top: 1%;
+}
+
+table, th, td {
+    border: 1px solid;
+    padding: 4px;
+}
+
+td {
+    max-width: 150px;
+    white-space: wrap;
+}
+
+.tableData {
+    width: 100%;
+    border: 1px solid;
+    border-collapse: collapse;
+}
+
+.totalRow {
+    width: 100%;
+}
+
+.tableMessage {
+    width: 70%;
+}
+
+.controlItem {
+    display: flex;
+    flex-direction: column;
+}
