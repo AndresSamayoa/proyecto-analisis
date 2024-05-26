@@ -19,6 +19,7 @@ import SaleDetailCrudContainer from './SaleDetailCrudContainer/SaleDetailCrudCon
 import DocumentForm from './DocumentForm/DocumentForm';
 import DocumentCrudContainer from './DocumentCrudContainer/DocumentCrudContainer';
 import GeneralCXCReport from './GeneralCXCReport/GeneralCXCReport';
+import SalesByRangeReport from './SalesByRangeReport/SalesByRangeReport';
 import DocumentFormat from './DocumentFormat/DocumentFormat';
 import { 
     CustomerFrecuencyReportProductQuantity,
@@ -51,5 +52,6 @@ export {
     DocumentFormat,
     CustomerFrecuencyReportProductQuantity,
     CustomerFrecuencyReportTotalValue,
-    CustomerFrecuencyReportFrecuency
+    CustomerFrecuencyReportFrecuency,
+    SalesByRangeReport
 }
