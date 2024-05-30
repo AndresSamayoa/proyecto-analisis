@@ -22,6 +22,7 @@ import GeneralCXCReport from './GeneralCXCReport/GeneralCXCReport';
 import SalesByRangeReport from './SalesByRangeReport/SalesByRangeReport';
 import CustomerAcountReport from './CustomerAcountReport/CustomerAcountReport';
 import PaymentByRangeReport from './PaymentByRangeReport/PaymentByRangeReport';
+import PendingSalesByRange from './PendingSalesByRange/PendingSalesByRange';
 import DocumentFormat from './DocumentFormat/DocumentFormat';
 import { 
     CustomerFrecuencyReportProductQuantity,
@@ -58,4 +59,5 @@ export {
     SalesByRangeReport,
     CustomerAcountReport,
     PaymentByRangeReport,
+    PendingSalesByRange,
 }

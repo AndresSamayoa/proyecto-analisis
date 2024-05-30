@@ -8,7 +8,8 @@ import {
     CustomerFrecuencyReportFrecuency,
     SalesByRangeReport,
     CustomerAcountReport,
-    PaymentByRangeReport
+    PaymentByRangeReport,
+    PendingSalesByRange
 } from '../../Components'
 
 import {useState} from 'react';
@@ -24,6 +25,7 @@ function Reports () {
             <button onClick={() => setReport(5)}>Ventas por fecha</button>
             <button onClick={() => setReport(6)}>Estado de cuentas</button>
             <button onClick={() => setReport(7)}>Pagos por fecha</button>
+            <button onClick={() => setReport(8)}>Ventas pendientes por fecha</button>
             <button onClick={() => setReport(1)}>Documento</button>
             <button onClick={() => setReport(2)}>Clientes frecuentes (cantidad)</button>
             <button onClick={() => setReport(3)}>Clientes frecuentes (valor)</button>
@@ -52,6 +54,9 @@ function Reports () {
         }
         {report === 7 &&
             <PaymentByRangeReport />
+        }
+        {report === 8 &&
+            <PendingSalesByRange />
         }
     </div>
 }
