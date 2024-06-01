@@ -50,7 +50,7 @@ function PaymentCrudContainer (props) {
     const [abonoId, setAbonoId] = useState(0);
     const [numeroAutorizacion, setNumeroAutorizacion] = useState(0);
     const [valor, setValor] = useState(0);
-    const [tipoPago, setTipoPago] = useState(0);
+    const [tipoPago, setTipoPago] = useState('Efectivo');
     const [mensajeIngreso, setMensajeIngreso] = useState('');
     const [mensajeTabla, setMensajeTabla] = useState('');
     const [tableData, setTableData] = useState([]);
@@ -102,7 +102,7 @@ function PaymentCrudContainer (props) {
     const clearForm = () => {
         setAbonoId(0);
         setValor(0);
-        setTipoPago('');
+        setTipoPago('Efectivo');
         setNumeroAutorizacion('');
         setMensajeIngreso('');
     };
